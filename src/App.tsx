@@ -1,0 +1,652 @@
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Download,
+  FileText,
+  Video,
+  Camera,
+  Globe,
+  AlignLeft,
+  LayoutGrid,
+  ShieldCheck,
+  Sparkles,
+  Check,
+  Keyboard,
+  ArrowUpRight,
+  Monitor,
+  MousePointerClick,
+  Volume2,
+  X,
+} from 'lucide-react';
+import { ResusLogo } from './components/ResusLogo';
+import { InteractiveCommandBar } from './components/InteractiveCommandBar';
+import { WorkflowShowcase } from './components/WorkflowShowcase';
+import { useLatestRelease } from './hooks/useLatestRelease';
+import { SITE_CONFIG } from './config/siteConfig';
+
+const FEATURE_CARDS = [
+  {
+    icon: <FileText className="w-5 h-5 text-[#292432]" />,
+    title: 'File & PDF Studio',
+    desc: 'Convert images, PDFs, audio, and video locally in seconds. Merge, split, OCR, watermark, or compress with zero cloud uploads.',
+    tag: '100% Offline',
+  },
+  {
+    icon: <Video className="w-5 h-5 text-[#292432]" />,
+    title: 'Screen Studio',
+    desc: 'Record 60 FPS product demos with smooth auto-zoom, click ripple effects, ASMR click audio, and a live keystroke HUD.',
+    tag: 'Auto-Zoom',
+  },
+  {
+    icon: <Camera className="w-5 h-5 text-[#292432]" />,
+    title: 'Rapid Capture',
+    desc: 'Continuous back-to-back full screen or custom region screenshots on a single key press, copied straight to your clipboard.',
+    tag: 'Instant',
+  },
+  {
+    icon: <Globe className="w-5 h-5 text-[#292432]" />,
+    title: 'Browser Control',
+    desc: 'Launch multi-tab workspace presets and instant web searches in Google Chrome or Microsoft Edge from one command.',
+    tag: 'Presets',
+  },
+  {
+    icon: <AlignLeft className="w-5 h-5 text-[#292432]" />,
+    title: 'Text, AI & Dev Tools',
+    desc: 'Rewrite, summarize, format JSON, generate UUIDs/hashes, or transform clipboard text from anywhere on Windows.',
+    tag: 'Clipboard',
+  },
+  {
+    icon: <LayoutGrid className="w-5 h-5 text-[#292432]" />,
+    title: 'And Much More',
+    desc: 'Dozens of additional utilities—from system cleanup and silent auto-updates to DPAPI-encrypted local security.',
+    tag: 'Growing Toolkit',
+  },
+];
+
+const SHORTCUTS = [
+  { keys: ['Alt', 'Space'], label: 'Summon Resus Command Bar from anywhere' },
+  { keys: ['Ctrl', 'G / S / M / F / I'], label: 'Switch live Screen Studio zoom presets on the fly' },
+  { keys: ['S'], label: 'Instant full-screen capture in Screenshot Mode' },
+  { keys: ['R'], label: 'Drag custom region capture in Screenshot Mode' },
+];
+
+export function App() {
+  const release = useLatestRelease();
+  const [showDodoModal, setShowDodoModal] = useState(false);
+
+  const handleProClick = () => {
+    if (SITE_CONFIG.dodoCheckoutUrl) {
+      window.open(SITE_CONFIG.dodoCheckoutUrl, '_blank', 'noopener,noreferrer');
+    } else {
+      setShowDodoModal(true);
+    }
+  };
+
+  return (
+    <div className="min-h-screen aurora-canvas relative selection:bg-[#B9A2E8]/40 selection:text-[#292432]">
+      {/* Subtle Film Grain Overlay */}
+      <div className="fixed inset-0 film-grain z-0" />
+
+      {/* Ambient Floating Aurora Blobs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="absolute -top-32 -left-24 w-[480px] h-[480px] rounded-full bg-[#B9A2E8]/25 blur-[110px] animate-aurora-blob" />
+        <div
+          className="absolute top-20 -right-24 w-[420px] h-[420px] rounded-full bg-[#D9A0B0]/25 blur-[110px] animate-aurora-blob"
+          style={{ animationDelay: '3s' }}
+        />
+      </div>
+
+      {/* Floating Sticky Navbar */}
+      <header className="sticky top-4 z-40 px-4 sm:px-6">
+        <nav className="max-w-5xl mx-auto rounded-full bg-[#FAF7F2]/80 backdrop-blur-xl border border-[#292432]/10 shadow-[0_8px_30px_rgba(41,36,50,0.08)] px-4 sm:px-6 h-14 flex items-center justify-between">
+          <a href="#" className="flex items-center gap-2.5 group">
+            <div className="w-8 h-8 rounded-[9px] bg-white border border-[#292432]/10 shadow-xs flex items-center justify-center p-1 group-hover:scale-105 transition-transform">
+              <ResusLogo className="w-full h-full" tile={false} />
+            </div>
+            <span className="font-display font-bold text-[17px] text-[#292432]">Resus</span>
+            <span className="hidden sm:inline-flex text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full bg-[#E8DEF6]/80 text-[#292432] border border-[#B9A2E8]/60">
+              {release.version}
+            </span>
+          </a>
+
+          <div className="hidden md:flex items-center gap-7 text-[13.5px] font-medium text-[#554B5D]">
+            <a href="#features" className="hover:text-[#292432] transition-colors">
+              Features
+            </a>
+            <a href="#workflows" className="hover:text-[#292432] transition-colors">
+              Use Cases
+            </a>
+            <a href="#shortcuts" className="hover:text-[#292432] transition-colors">
+              Shortcuts
+            </a>
+            <a href="#pricing" className="hover:text-[#292432] transition-colors">
+              Pricing
+            </a>
+          </div>
+
+          <div className="flex items-center gap-2.5">
+            <a
+              href={SITE_CONFIG.releasesPageUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="hidden sm:inline-flex items-center gap-1 text-[13px] font-medium text-[#554B5D] hover:text-[#292432] px-3 py-1.5 rounded-full hover:bg-white/60 transition-colors"
+            >
+              <span>Releases</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </a>
+            <a
+              href={release.downloadUrl}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#292432] hover:bg-[#3B3447] text-[#F5F0E8] text-[13px] font-semibold shadow-sm transition-all hover:scale-[1.02] active:scale-[0.99]"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Download</span>
+            </a>
+          </div>
+        </nav>
+      </header>
+
+      {/* Main Content */}
+      <main className="relative z-10">
+        {/* HERO SECTION */}
+        <section className="pt-14 sm:pt-20 pb-20 px-4 sm:px-6 max-w-6xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45 }}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/75 border border-[#292432]/12 shadow-xs mb-7"
+          >
+            <span className="w-2 h-2 rounded-full bg-[#1E6B48]" />
+            <span className="text-xs font-semibold text-[#292432]">
+              {release.version} Available · Windows 10 &amp; 11 (x64)
+            </span>
+          </motion.div>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, delay: 0.05 }}
+            className="font-display text-4xl sm:text-6xl lg:text-[66px] font-extrabold text-[#292432] tracking-tight leading-[1.06] max-w-4xl mx-auto"
+          >
+            Your desktop.
+            <br />
+            <span className="bg-gradient-to-r from-[#292432] via-[#624B8A] to-[#9B4D6A] bg-clip-text text-transparent">
+              On another level.
+            </span>
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, delay: 0.12 }}
+            className="mt-6 text-base sm:text-lg text-[#554B5D] max-w-2xl mx-auto leading-relaxed"
+          >
+            One command. Countless possibilities. Convert files and PDFs offline, record
+            studio-grade demos with smooth auto-zoom, capture rapid screenshots, and launch
+            browser presets — right from your keyboard.
+          </motion.p>
+
+          {/* Primary Download CTA */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.18 }}
+            className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3.5"
+          >
+            <a
+              href={release.downloadUrl}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-2xl bg-[#292432] hover:bg-[#3B3447] text-[#F5F0E8] font-semibold text-[15px] shadow-[0_14px_32px_-8px_rgba(41,36,50,0.38)] transition-all hover:-translate-y-0.5"
+            >
+              <Download className="w-4 h-4" />
+              <span>Download for Windows</span>
+              <span className="text-xs font-mono opacity-80 bg-white/15 px-2 py-0.5 rounded-md">
+                {release.version}
+              </span>
+            </a>
+
+            <a
+              href="#workflows"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-[#F5F0E8]/90 hover:bg-white text-[#292432] border border-[#292432]/15 font-semibold text-[15px] shadow-xs transition-all hover:-translate-y-0.5"
+            >
+              <span>Explore Use Cases</span>
+            </a>
+          </motion.div>
+
+          <p className="mt-3 text-xs text-[#827786] font-medium">
+            {release.fileSizeLabel} · 7-day full-access free trial · No credit card required
+          </p>
+
+          {/* Interactive Live Command Bar */}
+          <div className="mt-14">
+            <InteractiveCommandBar />
+          </div>
+        </section>
+
+        {/* FEATURES BENTO GRID */}
+        <section id="features" className="py-20 px-4 sm:px-6 max-w-6xl mx-auto">
+          <div className="text-center max-w-2xl mx-auto mb-14">
+            <span className="text-xs font-bold uppercase tracking-[0.16em] text-[#554B5D]">
+              A Growing Toolkit
+            </span>
+            <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#292432] mt-2">
+              Small command. Big possibilities.
+            </h2>
+            <p className="text-[15px] text-[#554B5D] mt-3">
+              Everything you used to open five different apps or websites for—unified into one fast,
+              native Windows command center.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {FEATURE_CARDS.map((card, i) => (
+              <motion.div
+                key={card.title}
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-60px' }}
+                transition={{ duration: 0.4, delay: i * 0.05 }}
+                className="aurora-card rounded-[20px] p-6 flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-5">
+                    <div className="w-11 h-11 rounded-xl bg-[#E8DEF6]/80 border border-[#B9A2E8]/60 flex items-center justify-center">
+                      {card.icon}
+                    </div>
+                    <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-[#F5F0E8] border border-[#292432]/10 text-[#554B5D]">
+                      {card.tag}
+                    </span>
+                  </div>
+                  <h3 className="font-display text-lg font-bold text-[#292432] mb-2">
+                    {card.title}
+                  </h3>
+                  <p className="text-[14px] leading-relaxed text-[#554B5D]">{card.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        {/* SCREEN STUDIO SPOTLIGHT */}
+        <section className="py-16 px-4 sm:px-6 max-w-6xl mx-auto">
+          <div className="aurora-card rounded-[28px] p-7 sm:p-11 overflow-hidden relative">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+              <div className="lg:col-span-6 space-y-5">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F0E0E8] border border-[#D9A0B0]/70 text-xs font-bold text-[#292432]">
+                  <span className="w-2 h-2 rounded-full bg-[#9B2C48]" />
+                  <span>Built-In Screen Studio</span>
+                </div>
+
+                <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#292432] leading-tight">
+                  Record demos that feel hand-edited—automatically.
+                </h2>
+
+                <p className="text-[15px] leading-relaxed text-[#554B5D]">
+                  Switch zoom intensities in real time while recording, highlight every click with
+                  custom ripples and crisp ASMR click audio, and display a macOS-style keystroke
+                  HUD so viewers can follow every shortcut.
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                  <div className="p-3.5 rounded-2xl bg-white/70 border border-[#292432]/10">
+                    <Monitor className="w-4 h-4 text-[#292432] mb-2" />
+                    <div className="text-xs font-bold text-[#292432]">5 Zoom Presets</div>
+                    <div className="text-[11px] text-[#554B5D] mt-0.5">Gentle to Intense</div>
+                  </div>
+                  <div className="p-3.5 rounded-2xl bg-white/70 border border-[#292432]/10">
+                    <MousePointerClick className="w-4 h-4 text-[#292432] mb-2" />
+                    <div className="text-xs font-bold text-[#292432]">Click Ripples</div>
+                    <div className="text-[11px] text-[#554B5D] mt-0.5">Lavender, Rose &amp; Sky</div>
+                  </div>
+                  <div className="p-3.5 rounded-2xl bg-white/70 border border-[#292432]/10">
+                    <Volume2 className="w-4 h-4 text-[#292432] mb-2" />
+                    <div className="text-xs font-bold text-[#292432]">ASMR Clicks</div>
+                    <div className="text-[11px] text-[#554B5D] mt-0.5">Real-time tactile audio</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Studio HUD Preview Mockup */}
+              <div className="lg:col-span-6 space-y-4">
+                <div className="rounded-2xl bg-gradient-to-br from-[#F5F0E8] via-[#E8DEF6] to-[#F0E0E8] p-6 border border-[#292432]/12 shadow-inner space-y-4">
+                  {/* Floating HUD Bar Replica */}
+                  <div className="rounded-full bg-[#FAF7F2]/95 border border-[#827786]/35 px-4 py-2.5 shadow-md flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2.5">
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#9B2C48] animate-pulse" />
+                      <span className="text-xs font-bold text-[#292432]">REC</span>
+                      <span className="font-mono text-xs font-semibold text-[#292432]">00:42</span>
+                      <span className="hidden sm:inline-flex px-2 py-0.5 rounded-md bg-[#B9A2E8]/35 border border-[#B9A2E8] text-[10.5px] font-semibold text-[#292432]">
+                        Focused · 1.65x
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="px-2.5 py-1 rounded-lg bg-[#F5F0E8] border border-[#827786]/30 text-[11px] font-semibold text-[#292432]">
+                        Pause
+                      </span>
+                      <span className="px-2.5 py-1 rounded-lg bg-[#F5F0E8] border border-[#827786]/30 text-[11px] font-semibold text-[#292432]">
+                        Shot
+                      </span>
+                      <span className="px-2.5 py-1 rounded-lg bg-[#9B2C48] text-[11px] font-semibold text-[#F5F0E8]">
+                        Stop
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Zoom Presets Row Replica */}
+                  <div className="grid grid-cols-5 gap-2">
+                    {[
+                      { name: 'Gentle', key: 'Ctrl+G', active: false },
+                      { name: 'Subtle', key: 'Ctrl+S', active: false },
+                      { name: 'Moderate', key: 'Ctrl+M', active: false },
+                      { name: 'Focused', key: 'Ctrl+F', active: true },
+                      { name: 'Intense', key: 'Ctrl+I', active: false },
+                    ].map((preset) => (
+                      <div
+                        key={preset.name}
+                        className={`rounded-xl p-2.5 text-center border transition-all ${
+                          preset.active
+                            ? 'bg-[#B9A2E8]/45 border-[#B9A2E8] shadow-xs'
+                            : 'bg-white/60 border-white/80'
+                        }`}
+                      >
+                        <div className="text-[11px] font-bold text-[#292432]">{preset.name}</div>
+                        <div className="text-[9.5px] font-mono text-[#554B5D] mt-0.5">
+                          {preset.key}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* WORKFLOWS BY ROLE */}
+        <section id="workflows" className="py-20 px-4 sm:px-6 max-w-6xl mx-auto">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <span className="text-xs font-bold uppercase tracking-[0.16em] text-[#554B5D]">
+              Use Cases
+            </span>
+            <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#292432] mt-2">
+              Built for how you actually work
+            </h2>
+            <p className="text-[15px] text-[#554B5D] mt-3">
+              See how developers, creators, and teams use Resus every day to save hours of context
+              switching.
+            </p>
+          </div>
+
+          <WorkflowShowcase />
+        </section>
+
+        {/* KEYBOARD-FIRST SHORTCUTS */}
+        <section id="shortcuts" className="py-16 px-4 sm:px-6 max-w-5xl mx-auto">
+          <div className="aurora-card rounded-[24px] p-7 sm:p-10">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+              <div>
+                <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#554B5D] mb-1.5">
+                  <Keyboard className="w-4 h-4 text-[#292432]" />
+                  <span>Keyboard-First Speed</span>
+                </div>
+                <h2 className="font-display text-2xl sm:text-3xl font-bold text-[#292432]">
+                  Zero mouse friction. Instant muscle memory.
+                </h2>
+              </div>
+              <div className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#F5F0E8] border border-[#292432]/12 text-xs font-semibold text-[#292432]">
+                <ShieldCheck className="w-4 h-4 text-[#1E6B48]" />
+                <span>DPAPI Local Encryption</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {SHORTCUTS.map((item, idx) => (
+                <div
+                  key={idx}
+                  className="flex items-center justify-between gap-4 p-4 rounded-2xl bg-white/70 border border-[#292432]/10"
+                >
+                  <span className="text-[13.5px] font-medium text-[#292432]">{item.label}</span>
+                  <div className="flex items-center gap-1 shrink-0">
+                    {item.keys.map((k, ki) => (
+                      <React.Fragment key={ki}>
+                        <kbd className="kbd-key">{k}</kbd>
+                        {ki < item.keys.length - 1 && (
+                          <span className="text-xs text-[#827786]">+</span>
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* PRICING & DODO PAYMENTS SECTION */}
+        <section id="pricing" className="py-20 px-4 sm:px-6 max-w-5xl mx-auto">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <span className="text-xs font-bold uppercase tracking-[0.16em] text-[#554B5D]">
+              Simple Pricing
+            </span>
+            <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#292432] mt-2">
+              Try everything free. Upgrade when ready.
+            </h2>
+            <p className="text-[15px] text-[#554B5D] mt-3">
+              Start with a full-featured {SITE_CONFIG.trialDays}-day free trial. Unlock Resus Pro
+              with a single license key via Dodo Payments.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+            {/* Free Trial Card */}
+            <div className="aurora-card rounded-[24px] p-8 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-sm font-bold text-[#554B5D]">Free Trial</span>
+                  <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-[#F5F0E8] border border-[#292432]/10 text-[#292432]">
+                    No Card Required
+                  </span>
+                </div>
+                <div className="flex items-baseline gap-2 mb-2">
+                  <span className="font-display text-4xl font-extrabold text-[#292432]">$0</span>
+                  <span className="text-sm text-[#554B5D]">for {SITE_CONFIG.trialDays} days</span>
+                </div>
+                <p className="text-[14px] text-[#554B5D] mb-6">
+                  Full, unrestricted access to every Resus module from the moment you install.
+                </p>
+
+                <ul className="space-y-3 mb-8">
+                  {[
+                    'Command Bar & Smart Intent Suggestions',
+                    'Full Screen Studio with Auto-Zoom & ASMR Clicks',
+                    'Offline PDF & Media Conversion Suite',
+                    'Rapid Capture & Browser Multi-Tab Presets',
+                    'Automatic Updates via GitHub Releases',
+                  ].map((feat) => (
+                    <li key={feat} className="flex items-start gap-2.5 text-[13.5px] text-[#292432]">
+                      <Check className="w-4 h-4 text-[#1E6B48] shrink-0 mt-0.5" />
+                      <span>{feat}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <a
+                href={release.downloadUrl}
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#F5F0E8] hover:bg-white text-[#292432] border border-[#292432]/15 font-semibold text-sm transition-all"
+              >
+                <Download className="w-4 h-4" />
+                <span>Download Free Trial ({release.version})</span>
+              </a>
+            </div>
+
+            {/* Resus Pro Card (Dodo Payments) */}
+            <div className="rounded-[24px] p-8 flex flex-col justify-between bg-gradient-to-br from-[#FAF7F2] via-[#E8DEF6]/80 to-[#F0E0E8]/90 border-2 border-[#B9A2E8] shadow-[0_20px_50px_-12px_rgba(41,36,50,0.16)] relative">
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-sm font-bold text-[#292432]">Resus Pro</span>
+                  <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full bg-[#292432] text-[#F5F0E8]">
+                    <Sparkles className="w-3 h-3" />
+                    <span>Lifetime License</span>
+                  </span>
+                </div>
+                <div className="flex items-baseline gap-2 mb-2">
+                  <span className="font-display text-4xl font-extrabold text-[#292432]">
+                    {SITE_CONFIG.proPriceDisplay}
+                  </span>
+                  <span className="text-sm text-[#554B5D]">{SITE_CONFIG.proBillingLabel}</span>
+                </div>
+                <p className="text-[14px] text-[#554B5D] mb-6">
+                  Instant license key delivery via Dodo Payments. Activate right inside Resus.
+                </p>
+
+                <ul className="space-y-3 mb-8">
+                  {[
+                    'Everything in the Free Trial, unlocked forever',
+                    'Instant Pro License Key activation on your PC',
+                    'All future v1.x updates & new offline tools included',
+                    'Bring your own AI API keys (optional)',
+                    'Priority feature requests & support',
+                  ].map((feat) => (
+                    <li key={feat} className="flex items-start gap-2.5 text-[13.5px] text-[#292432]">
+                      <Check className="w-4 h-4 text-[#1E6B48] shrink-0 mt-0.5" />
+                      <span>{feat}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleProClick}
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#292432] hover:bg-[#3B3447] text-[#F5F0E8] font-semibold text-sm shadow-md transition-all cursor-pointer hover:-translate-y-0.5"
+              >
+                <span>Get Resus Pro</span>
+                <ArrowUpRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* FINAL DOWNLOAD CTA */}
+        <section className="py-16 px-4 sm:px-6 max-w-5xl mx-auto">
+          <div className="rounded-[28px] bg-[#292432] text-[#F5F0E8] p-8 sm:p-14 text-center relative overflow-hidden shadow-2xl">
+            <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-[#B9A2E8]/20 blur-[80px] pointer-events-none" />
+            <div className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-[#D9A0B0]/20 blur-[80px] pointer-events-none" />
+
+            <div className="relative z-10 max-w-2xl mx-auto">
+              <div className="w-14 h-14 rounded-2xl bg-white p-2 mx-auto mb-6 shadow-lg">
+                <ResusLogo className="w-full h-full" tile={false} />
+              </div>
+              <h2 className="font-display text-3xl sm:text-4xl font-bold mb-3">
+                Ready to upgrade your Windows workflow?
+              </h2>
+              <p className="text-[#F5F0E8]/75 text-[15px] mb-8">
+                Download Resus {release.version} for Windows 10 &amp; 11 and start your{' '}
+                {SITE_CONFIG.trialDays}-day free trial in under 30 seconds.
+              </p>
+              <a
+                href={release.downloadUrl}
+                className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-2xl bg-[#F5F0E8] hover:bg-white text-[#292432] font-bold text-[15px] shadow-lg transition-all hover:scale-[1.02]"
+              >
+                <Download className="w-4 h-4" />
+                <span>Download Resus {release.version} (.exe)</span>
+              </a>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      {/* FOOTER */}
+      <footer className="relative z-10 border-t border-[#292432]/10 mt-10 py-10 px-4 sm:px-6">
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#554B5D]">
+          <div className="flex items-center gap-2.5">
+            <div className="w-6 h-6 rounded-md bg-white border border-[#292432]/10 p-0.5 flex items-center justify-center">
+              <ResusLogo className="w-full h-full" tile={false} />
+            </div>
+            <span className="font-semibold text-[#292432]">Resus</span>
+            <span>·</span>
+            <span>A growing toolkit packed with useful features.</span>
+          </div>
+
+          <div className="flex items-center gap-5 font-medium">
+            <a href="#features" className="hover:text-[#292432] transition-colors">
+              Features
+            </a>
+            <a href="#pricing" className="hover:text-[#292432] transition-colors">
+              Pricing
+            </a>
+            <a
+              href={SITE_CONFIG.releasesPageUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-[#292432] transition-colors"
+            >
+              GitHub Releases
+            </a>
+          </div>
+        </div>
+      </footer>
+
+      {/* Dodo Payments Checkout Pending Modal (shown if dodoCheckoutUrl is not yet set) */}
+      <AnimatePresence>
+        {showDodoModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-[#292432]/45 backdrop-blur-xs flex items-center justify-center p-4"
+            onClick={() => setShowDodoModal(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 8 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 8 }}
+              onClick={(e) => e.stopPropagation()}
+              className="resus-pill rounded-[24px] max-w-md w-full p-7 relative"
+            >
+              <button
+                type="button"
+                onClick={() => setShowDodoModal(false)}
+                aria-label="Close modal"
+                className="absolute top-5 right-5 w-8 h-8 rounded-full bg-[#F5F0E8] border border-[#827786]/30 flex items-center justify-center hover:bg-white cursor-pointer"
+              >
+                <X className="w-4 h-4 text-[#292432]" />
+              </button>
+
+              <div className="w-11 h-11 rounded-xl bg-white border border-[#292432]/10 p-1.5 mb-4 shadow-xs">
+                <ResusLogo className="w-full h-full" tile={false} />
+              </div>
+
+              <h3 className="font-display text-xl font-bold text-[#292432] mb-2">
+                Dodo Payments Checkout Coming Soon
+              </h3>
+              <p className="text-sm text-[#554B5D] leading-relaxed mb-5">
+                Pro checkout via Dodo Payments is being finalized. In the meantime, download Resus{' '}
+                {release.version} and enjoy full, unrestricted access with the{' '}
+                {SITE_CONFIG.trialDays}-day free trial!
+              </p>
+
+              <div className="flex items-center gap-3">
+                <a
+                  href={release.downloadUrl}
+                  className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#292432] text-[#F5F0E8] text-sm font-semibold hover:bg-[#3B3447] transition-colors"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Download Free Trial</span>
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setShowDodoModal(false)}
+                  className="px-4 py-2.5 rounded-xl bg-[#F5F0E8] border border-[#292432]/15 text-sm font-semibold text-[#292432] hover:bg-white cursor-pointer"
+                >
+                  Close
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+export default App;
