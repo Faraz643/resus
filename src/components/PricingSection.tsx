@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   Check,
@@ -15,6 +15,32 @@ import {
 } from 'lucide-react';
 import { SITE_CONFIG } from '../config/siteConfig';
 
+type CurrencyKey = 'usd' | 'inr';
+
+function detectInitialCurrency(): CurrencyKey {
+  try {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('resus_currency_pref');
+      if (stored === 'usd' || stored === 'inr') return stored;
+
+      // 1. Instant zero-latency detection via Timezone
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+      if (tz.includes('Calcutta') || tz.includes('Kolkata')) {
+        return 'inr';
+      }
+
+      // 2. Check navigator locale
+      const lang = navigator.language || '';
+      if (lang.includes('en-IN') || lang.includes('hi')) {
+        return 'inr';
+      }
+    }
+  } catch {
+    // fallback
+  }
+  return 'usd';
+}
+
 interface PricingSectionProps {
   downloadUrl: string;
   version: string;
@@ -22,10 +48,56 @@ interface PricingSectionProps {
 }
 
 export function PricingSection({ downloadUrl, version, onOpenDodoModal }: PricingSectionProps) {
+  const [selectedCurrency, setSelectedCurrency] = useState<CurrencyKey>(detectInitialCurrency);
   const [copiedCode, setCopiedCode] = useState(false);
 
   const pricing = SITE_CONFIG.pricing;
+  const activePricing = pricing[selectedCurrency];
   const couponCode = pricing.earlyBirdCouponCode;
+
+  // Background IP lookup for secondary verification
+  useEffect(() => {
+    try {
+      if (localStorage.getItem('resus_currency_pref')) return;
+    } catch {
+      // ignore
+    }
+
+    let isMounted = true;
+    fetch('https://api.country.is')
+      .then((res) => res.json())
+      .then((data) => {
+        if (!isMounted) return;
+        if (data && data.country === 'IN') {
+          setSelectedCurrency('inr');
+        }
+      })
+      .catch(() => {
+        // Fallback secondary check
+        fetch('https://ipapi.co/country/')
+          .then((res) => res.text())
+          .then((code) => {
+            if (!isMounted) return;
+            if (code && code.trim() === 'IN') {
+              setSelectedCurrency('inr');
+            }
+          })
+          .catch(() => {});
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const handleSelectCurrency = (curr: CurrencyKey) => {
+    setSelectedCurrency(curr);
+    try {
+      localStorage.setItem('resus_currency_pref', curr);
+    } catch {
+      // ignore
+    }
+  };
 
   const handleCopyCoupon = () => {
     navigator.clipboard.writeText(couponCode);
@@ -47,7 +119,7 @@ export function PricingSection({ downloadUrl, version, onOpenDodoModal }: Pricin
   return (
     <section id="pricing" className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-20">
       {/* Section Header */}
-      <div className="text-center mb-12">
+      <div className="text-center mb-10">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -71,11 +143,37 @@ export function PricingSection({ downloadUrl, version, onOpenDodoModal }: Pricin
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.1 }}
-          className="text-[#554B5D] text-[15px] max-w-2xl mx-auto"
+          className="text-[#554B5D] text-[15px] max-w-2xl mx-auto mb-6"
         >
           {SITE_CONFIG.trialDays}-day unrestricted free trial with zero credit card required. Upgrade
           to a perpetual license whenever you are ready—no monthly subscription traps.
         </motion.p>
+
+        {/* Currency Switcher Pill */}
+        <div className="inline-flex items-center p-1 rounded-full bg-white/75 border border-[#292432]/15 backdrop-blur-md shadow-xs">
+          <button
+            type="button"
+            onClick={() => handleSelectCurrency('usd')}
+            className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+              selectedCurrency === 'usd'
+                ? 'bg-[#292432] text-[#F5F0E8] shadow-xs'
+                : 'text-[#554B5D] hover:text-[#292432]'
+            }`}
+          >
+            🌐 Global ($ USD)
+          </button>
+          <button
+            type="button"
+            onClick={() => handleSelectCurrency('inr')}
+            className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+              selectedCurrency === 'inr'
+                ? 'bg-[#292432] text-[#F5F0E8] shadow-xs'
+                : 'text-[#554B5D] hover:text-[#292432]'
+            }`}
+          >
+            🇮🇳 India (₹ INR)
+          </button>
+        </div>
       </div>
 
       {/* Early Bird Launch Special Banner */}
@@ -95,12 +193,18 @@ export function PricingSection({ downloadUrl, version, onOpenDodoModal }: Pricin
                 Launch Special: First {pricing.earlyBirdSeatsTotal} Customers
               </span>
               <span className="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#D9A0B0]/30 text-[#8B2346] border border-[#D9A0B0]/60">
-                {pricing.discountPercent}
+                {activePricing.discountLabel}
               </span>
             </div>
             <p className="text-xs text-[#554B5D] mt-0.5">
               Use code <strong className="text-[#292432] font-mono">{couponCode}</strong> at checkout
-              to get Resus Pro for only <strong>${pricing.earlyBirdPrice}</strong> (normally ${pricing.standardPrice}).
+              to get Resus Pro for only{' '}
+              <strong>
+                {activePricing.currencySymbol}
+                {activePricing.earlyBirdPrice}
+              </strong>{' '}
+              (normally {activePricing.currencySymbol}
+              {activePricing.standardPrice}).
             </p>
           </div>
         </div>
@@ -209,8 +313,9 @@ export function PricingSection({ downloadUrl, version, onOpenDodoModal }: Pricin
               <span className="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-[#B9A2E8]/30 text-[#292432] border border-[#B9A2E8]/60">
                 6 Months Updates + Keep Forever
               </span>
-              <span className="text-xs font-semibold text-[#8B2346]">
-                Launch Discount Active
+              <span className="text-xs font-semibold text-[#8B2346] flex items-center gap-1">
+                <span>{activePricing.flag}</span>
+                <span>{activePricing.regionLabel}</span>
               </span>
             </div>
 
@@ -223,10 +328,12 @@ export function PricingSection({ downloadUrl, version, onOpenDodoModal }: Pricin
 
             <div className="flex items-baseline gap-3 mb-6">
               <span className="text-xl sm:text-2xl text-[#827786] line-through font-bold">
-                ${pricing.standardPrice}
+                {activePricing.currencySymbol}
+                {activePricing.standardPrice}
               </span>
               <span className="font-display text-4xl sm:text-5xl font-extrabold text-[#292432]">
-                ${pricing.earlyBirdPrice}
+                {activePricing.currencySymbol}
+                {activePricing.earlyBirdPrice}
               </span>
               <div className="flex flex-col">
                 <span className="text-xs font-bold text-[#8B2346]">
@@ -275,7 +382,10 @@ export function PricingSection({ downloadUrl, version, onOpenDodoModal }: Pricin
             whileTap={{ scale: 0.98 }}
             className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-5 rounded-xl bg-[#292432] hover:bg-[#3B3447] text-[#F5F0E8] font-bold text-sm transition-colors shadow-md cursor-pointer"
           >
-            <span>Get Resus Pro (${pricing.earlyBirdPrice})</span>
+            <span>
+              Get Resus Pro ({activePricing.currencySymbol}
+              {activePricing.earlyBirdPrice})
+            </span>
             <ArrowRight className="w-4 h-4" />
           </motion.button>
         </motion.div>

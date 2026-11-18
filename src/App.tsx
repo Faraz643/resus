@@ -584,11 +584,20 @@ export function App() {
               </p>
               <div className="rounded-xl bg-[#FAF7F2] p-3.5 border border-[#292432]/10 mb-4 text-xs space-y-1.5 text-[#3F3748]">
                 <div className="flex justify-between items-center">
-                  <span>One-time License:</span>
+                  <span>Global (USD):</span>
                   <span className="font-bold text-[#292432] text-sm">
-                    ${SITE_CONFIG.pricing.earlyBirdPrice}{' '}
+                    ${SITE_CONFIG.pricing.usd.earlyBirdPrice}{' '}
                     <span className="line-through text-[#827786] font-normal text-xs">
-                      ${SITE_CONFIG.pricing.standardPrice}
+                      ${SITE_CONFIG.pricing.usd.standardPrice}
+                    </span>
+                  </span>
+                </div>
+                <div className="flex justify-between items-center pt-1 border-t border-[#292432]/10">
+                  <span>India (INR):</span>
+                  <span className="font-bold text-[#292432] text-sm">
+                    ₹{SITE_CONFIG.pricing.inr.earlyBirdPrice}{' '}
+                    <span className="line-through text-[#827786] font-normal text-xs">
+                      ₹{SITE_CONFIG.pricing.inr.standardPrice}
                     </span>
                   </span>
                 </div>
