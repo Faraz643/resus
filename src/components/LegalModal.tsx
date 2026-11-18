@@ -96,7 +96,7 @@ export function LegalModal({ activeDoc, onClose, onSwitchDoc }: LegalModalProps)
             </div>
 
             {/* Scrollable Body */}
-            <div className="px-6 sm:px-8 py-6 overflow-y-auto text-xs sm:text-[13px] text-[#3F3748] leading-relaxed space-y-4">
+            <div className="px-6 sm:px-8 py-6 overflow-y-auto text-xs sm:text-[13px] text-[#3F3748] leading-relaxed space-y-4 resus-scrollbar">
               {activeDoc === 'privacy' && (
                 <>
                   <p>
@@ -124,6 +124,18 @@ export function LegalModal({ activeDoc, onClose, onSwitchDoc }: LegalModalProps)
                     <h4 className="font-bold text-[#292432] mb-1">4. Website Currency Detection</h4>
                     <p>
                       This website uses your browser&apos;s timezone/locale and a lightweight country-code lookup to display accurate regional pricing (USD or INR) and saves your manual currency preference in local browser storage.
+                    </p>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-[#292432] mb-1">5. Real Human Support</h4>
+                    <p>
+                      Have questions about your privacy or data? Reach out to real human support directly at{' '}
+                      <a
+                        href={`mailto:${SITE_CONFIG.supportEmail}?subject=Resus%20Privacy%20Question`}
+                        className="font-semibold text-[#8B2346] underline"
+                      >
+                        {SITE_CONFIG.supportEmail}
+                      </a>.
                     </p>
                   </div>
                 </>
@@ -164,6 +176,18 @@ export function LegalModal({ activeDoc, onClose, onSwitchDoc }: LegalModalProps)
                       Resus is provided &ldquo;as is&rdquo; without warranty of any kind. Always keep backups of critical files before running batch file operations.
                     </p>
                   </div>
+                  <div>
+                    <h4 className="font-bold text-[#292432] mb-1">6. Support Contact</h4>
+                    <p>
+                      Need help or clarification on these terms? Contact real human support anytime at{' '}
+                      <a
+                        href={`mailto:${SITE_CONFIG.supportEmail}?subject=Resus%20Terms%20Inquiry`}
+                        className="font-semibold text-[#8B2346] underline"
+                      >
+                        {SITE_CONFIG.supportEmail}
+                      </a>.
+                    </p>
+                  </div>
                 </>
               )}
 
@@ -185,16 +209,16 @@ export function LegalModal({ activeDoc, onClose, onSwitchDoc }: LegalModalProps)
                     </p>
                   </div>
                   <div>
-                    <h4 className="font-bold text-[#292432] mb-1">3. How to Request a Refund</h4>
+                    <h4 className="font-bold text-[#292432] mb-1">3. How to Request a Refund (Real Human Support)</h4>
                     <p>
-                      Email{' '}
+                      Email our team directly for human support at{' '}
                       <a
                         href={`mailto:${SITE_CONFIG.supportEmail}?subject=Resus%20Refund%20Request`}
                         className="font-semibold text-[#8B2346] underline"
                       >
                         {SITE_CONFIG.supportEmail}
                       </a>{' '}
-                      or open a support ticket with your purchase email and payment ID. Once processed, your license key will be deactivated and funds returned to your original payment method.
+                      with your purchase email and payment ID. A real human will process your request promptly, deactivate the license key, and return the funds to your original payment method.
                     </p>
                   </div>
                 </>
@@ -202,12 +226,13 @@ export function LegalModal({ activeDoc, onClose, onSwitchDoc }: LegalModalProps)
             </div>
 
             {/* Footer */}
-            <div className="px-6 sm:px-8 py-4 border-t border-[#292432]/10 bg-white/60 flex items-center justify-between gap-3 text-xs">
-              <span className="text-[#554B5D]">
-                Questions?{' '}
+            <div className="px-6 sm:px-8 py-4 border-t border-[#292432]/10 bg-white/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+              <span className="text-[#554B5D] flex items-center gap-1.5 flex-wrap">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0 animate-pulse"></span>
+                <span>Questions? Real human support:</span>{' '}
                 <a
                   href={`mailto:${SITE_CONFIG.supportEmail}`}
-                  className="font-semibold text-[#292432] hover:text-[#8B2346] underline"
+                  className="font-semibold text-[#8B2346] hover:text-[#292432] underline"
                 >
                   {SITE_CONFIG.supportEmail}
                 </a>
@@ -215,7 +240,7 @@ export function LegalModal({ activeDoc, onClose, onSwitchDoc }: LegalModalProps)
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 rounded-xl bg-[#292432] text-[#F5F0E8] font-semibold hover:bg-[#3B3447] cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-[#292432] text-[#F5F0E8] font-semibold hover:bg-[#3B3447] cursor-pointer shrink-0 self-end sm:self-auto"
               >
                 Close
               </button>

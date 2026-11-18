@@ -135,3 +135,29 @@
 .animate-aurora-blob {
   animation: floatSlow 6.5s ease-in-out infinite;
 }
+
+/* Sleek Modern Custom Scrollbar for Modal and Content Cards */
+.resus-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(130, 119, 134, 0.4) transparent;
+}
+
+.resus-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.resus-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 8px 0;
+}
+
+.resus-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(130, 119, 134, 0.32);
+  border-radius: 9999px;
+  transition: background 0.2s ease;
+}
+
+.resus-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 35, 70, 0.65);
+}
