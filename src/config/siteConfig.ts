@@ -20,16 +20,14 @@ export const SITE_CONFIG = {
     modelDescription: 'Pay once, own forever. Includes 6 months of software updates. Valid on up to 2 PCs.',
     earlyBirdSeatsTotal: 20,
     earlyBirdCouponCode: 'EARLY20',
-    standardPrice: 9,
+    standardPrice: 9.5,
     earlyBirdPrice: 6,
     currencySymbol: '$',
-    discountPercent: '33% OFF',
+    discountPercent: '35% OFF',
     deviceLimit: 2,
     updatesMonths: 6,
   },
 
   // Dodo Payments Configuration
-  // TODO (Faraz): Replace with your live Dodo Payments Checkout URL once product is created in Dodo dashboard.
-  // Example: 'https://checkout.dodopayments.com/buy/pdt_xxxxxxxxxxxxx'
-  dodoCheckoutUrl: '' as string,
+  dodoCheckoutUrl: 'https://test.checkout.dodopayments.com/buy/pdt_0NsDA18IkLSnadxEwBgY9' as string,
 } as const;
