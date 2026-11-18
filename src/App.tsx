@@ -15,6 +15,9 @@ import {
   MousePointerClick,
   Volume2,
   X,
+  Copy,
+  CheckCircle2,
+  Key,
 } from 'lucide-react';
 import { ResusLogo } from './components/ResusLogo';
 import { InteractiveCommandBar } from './components/InteractiveCommandBar';
@@ -80,8 +83,22 @@ const ZOOM_PRESETS = [
 export function App() {
   const release = useLatestRelease();
   const [showDodoModal, setShowDodoModal] = useState(false);
+  const [successLicenseKey, setSuccessLicenseKey] = useState<string | null>(null);
+  const [copiedSuccessKey, setCopiedSuccessKey] = useState(false);
   const [activeZoom, setActiveZoom] = useState('Focused');
   const [elapsedSec, setElapsedSec] = useState(42);
+
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const key = params.get('license_key');
+      if (key) {
+        setSuccessLicenseKey(key);
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -623,6 +640,123 @@ export function App() {
                   className="px-4 py-2.5 rounded-xl bg-[#F5F0E8] border border-[#292432]/15 text-sm font-semibold text-[#292432] hover:bg-white cursor-pointer"
                 >
                   Close
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {successLicenseKey && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSuccessLicenseKey(null)}
+            className="fixed inset-0 z-50 bg-[#292432]/70 backdrop-blur-md flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 10 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 10 }}
+              onClick={(e) => e.stopPropagation()}
+              className="resus-pill rounded-[28px] max-w-lg w-full p-8 relative shadow-2xl border-2 border-[#8B2346]/20 bg-[#FAF7F2]"
+            >
+              <button
+                type="button"
+                onClick={() => setSuccessLicenseKey(null)}
+                aria-label="Close modal"
+                className="absolute top-5 right-5 w-8 h-8 rounded-full bg-[#F5F0E8] border border-[#827786]/30 flex items-center justify-center hover:bg-white cursor-pointer"
+              >
+                <X className="w-4 h-4 text-[#292432]" />
+              </button>
+
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600">
+                  <CheckCircle2 className="w-6 h-6" />
+                </div>
+                <div>
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full">
+                    Payment Verified
+                  </span>
+                  <h3 className="font-display text-2xl font-bold text-[#292432] mt-0.5">
+                    Welcome to Resus Pro!
+                  </h3>
+                </div>
+              </div>
+
+              <p className="text-xs text-[#554B5D] leading-relaxed mb-5">
+                Thank you for supporting Resus! Your lifetime license includes 6 months of continuous updates and can be activated on up to 2 personal PCs.
+              </p>
+
+              {/* License Key Box */}
+              <div className="rounded-2xl bg-white border border-[#292432]/15 p-4 mb-5 shadow-xs">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[11px] font-semibold text-[#827786] flex items-center gap-1.5 uppercase tracking-wider">
+                    <Key className="w-3.5 h-3.5 text-[#8B2346]" />
+                    Your Pro License Key
+                  </span>
+                  <span className="text-[11px] text-[#827786]">2 PC Activations</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <code className="flex-1 font-mono text-sm sm:text-base font-bold text-[#292432] bg-[#FAF7F2] px-3.5 py-2.5 rounded-xl border border-[#292432]/10 select-all overflow-x-auto break-all">
+                    {successLicenseKey}
+                  </code>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(successLicenseKey);
+                      setCopiedSuccessKey(true);
+                      setTimeout(() => setCopiedSuccessKey(false), 2500);
+                    }}
+                    className="px-4 py-2.5 rounded-xl bg-[#292432] text-[#F5F0E8] hover:bg-[#3B3447] text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
+                  >
+                    {copiedSuccessKey ? (
+                      <>
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>Copied!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3.5 h-3.5" />
+                        <span>Copy</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Quick Activation Steps */}
+              <div className="rounded-2xl bg-[#F5F0E8] border border-[#292432]/10 p-4 mb-6">
+                <h4 className="text-xs font-bold text-[#292432] uppercase tracking-wider mb-2.5">
+                  How to activate inside the app:
+                </h4>
+                <ol className="text-xs text-[#554B5D] space-y-2 list-decimal list-inside leading-relaxed">
+                  <li>
+                    Press <kbd className="px-1.5 py-0.5 rounded bg-white border border-[#292432]/20 text-[11px] font-mono text-[#292432]">Alt + Space</kbd> to open Resus
+                  </li>
+                  <li>
+                    Click the tray icon or command bar menu $\rightarrow$ <strong className="text-[#292432]">License & Trial...</strong>
+                  </li>
+                  <li>
+                    Paste your license key and click <strong className="text-[#292432]">Activate License</strong>
+                  </li>
+                </ol>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <a
+                  href={release.downloadUrl}
+                  className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#292432] text-[#F5F0E8] text-sm font-semibold hover:bg-[#3B3447] transition-colors"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Download Resus Installer</span>
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setSuccessLicenseKey(null)}
+                  className="px-4 py-2.5 rounded-xl bg-white border border-[#292432]/15 text-sm font-semibold text-[#292432] hover:bg-[#FAF7F2] cursor-pointer"
+                >
+                  Done
                 </button>
               </div>
             </motion.div>
