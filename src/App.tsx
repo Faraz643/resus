@@ -577,22 +577,23 @@ export function App() {
               </div>
 
               <h3 className="font-display text-xl font-bold text-[#292432] mb-1">
-                Resus Pro · Perpetual Fallback
+                Resus Pro · Pay Once, Own Forever
               </h3>
               <p className="text-xs font-semibold text-[#8B2346] mb-3">
                 Early Bird Offer: Code {SITE_CONFIG.pricing.earlyBirdCouponCode} (First {SITE_CONFIG.pricing.earlyBirdSeatsTotal} Customers)
               </p>
               <div className="rounded-xl bg-[#FAF7F2] p-3.5 border border-[#292432]/10 mb-4 text-xs space-y-1.5 text-[#3F3748]">
-                <div className="flex justify-between">
-                  <span>Tier 1 (Global / US, EU, UK):</span>
-                  <span className="font-bold text-[#292432]">$6 <span className="line-through text-[#827786] font-normal">$9</span></span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Tier 2 (PPP / India, LATAM, SEA):</span>
-                  <span className="font-bold text-[#292432]">$3 <span className="line-through text-[#827786] font-normal">$5</span></span>
+                <div className="flex justify-between items-center">
+                  <span>One-time License:</span>
+                  <span className="font-bold text-[#292432] text-sm">
+                    ${SITE_CONFIG.pricing.earlyBirdPrice}{' '}
+                    <span className="line-through text-[#827786] font-normal text-xs">
+                      ${SITE_CONFIG.pricing.standardPrice}
+                    </span>
+                  </span>
                 </div>
                 <div className="text-[11px] text-[#554B5D] pt-1 border-t border-[#292432]/10">
-                  Pay once, keep forever · 1 full year of continuous updates included.
+                  Pay once, own forever · 1 full year of continuous updates included.
                 </div>
               </div>
               <p className="text-xs text-[#554B5D] leading-relaxed mb-5">

@@ -15,26 +15,15 @@ export const SITE_CONFIG = {
   trialDays: 7,
 
   // Monetization & Dodo Payments Architecture
-  // Model 2: 7-Day Free Trial -> Perpetual Fallback (1 Year Updates + Keep Forever)
   pricing: {
-    model: 'Perpetual Fallback',
+    model: 'Pay Once, Own Forever',
     modelDescription: 'Pay once, own forever. Includes 1 full year of software updates.',
     earlyBirdSeatsTotal: 20,
     earlyBirdCouponCode: 'EARLY20',
-    tier1: {
-      name: 'Global / Tier 1 (US, EU, UK, CA, AU)',
-      standardPrice: 9,
-      earlyBirdPrice: 6,
-      currencySymbol: '$',
-      discountPercent: '33% OFF',
-    },
-    tier2: {
-      name: 'PPP / Tier 2 (India, Brazil, LATAM, SEA)',
-      standardPrice: 5,
-      earlyBirdPrice: 3,
-      currencySymbol: '$',
-      discountPercent: '40% OFF',
-    },
+    standardPrice: 9,
+    earlyBirdPrice: 6,
+    currencySymbol: '$',
+    discountPercent: '33% OFF',
   },
 
   // Dodo Payments Configuration
