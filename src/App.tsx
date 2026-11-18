@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Download,
@@ -6,7 +6,7 @@ import {
   Video,
   Camera,
   Globe,
-  AlignLeft,
+  FolderCog,
   LayoutGrid,
   ShieldCheck,
   Sparkles,
@@ -50,10 +50,10 @@ const FEATURE_CARDS = [
     tag: 'Presets',
   },
   {
-    icon: <AlignLeft className="w-5 h-5 text-[#292432]" />,
-    title: 'Text, AI & Dev Tools',
-    desc: 'Rewrite, summarize, format JSON, generate UUIDs/hashes, or transform clipboard text from anywhere on Windows.',
-    tag: 'Clipboard',
+    icon: <FolderCog className="w-5 h-5 text-[#292432]" />,
+    title: 'System & File Automation',
+    desc: 'Organize folders, batch-rename or zip archives, toggle system controls, and clean duplicates—from one command.',
+    tag: 'Desktop',
   },
   {
     icon: <LayoutGrid className="w-5 h-5 text-[#292432]" />,
@@ -70,9 +70,34 @@ const SHORTCUTS = [
   { keys: ['R'], label: 'Drag custom region capture in Screenshot Mode' },
 ];
 
+const ZOOM_PRESETS = [
+  { name: 'Gentle', key: 'Ctrl+G', scale: '1.20x' },
+  { name: 'Subtle', key: 'Ctrl+S', scale: '1.35x' },
+  { name: 'Moderate', key: 'Ctrl+M', scale: '1.50x' },
+  { name: 'Focused', key: 'Ctrl+F', scale: '1.65x' },
+  { name: 'Intense', key: 'Ctrl+I', scale: '1.90x' },
+];
+
 export function App() {
   const release = useLatestRelease();
   const [showDodoModal, setShowDodoModal] = useState(false);
+  const [activeZoom, setActiveZoom] = useState('Focused');
+  const [elapsedSec, setElapsedSec] = useState(42);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setElapsedSec((prev) => (prev + 1) % 3600);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatTimer = (sec: number) => {
+    const m = String(Math.floor(sec / 60)).padStart(2, '0');
+    const s = String(sec % 60).padStart(2, '0');
+    return `${m}:${s}`;
+  };
+
+  const activePresetObj = ZOOM_PRESETS.find((z) => z.name === activeZoom) ?? ZOOM_PRESETS[3];
 
   const handleProClick = () => {
     if (SITE_CONFIG.dodoCheckoutUrl) {
@@ -96,9 +121,9 @@ export function App() {
         />
       </div>
 
-      {/* Floating Sticky Navbar */}
+      {/* Floating Transparent Frosted Navbar */}
       <header className="sticky top-4 z-40 px-4 sm:px-6">
-        <nav className="max-w-5xl mx-auto rounded-full bg-[#FAF7F2]/80 backdrop-blur-xl border border-[#292432]/10 shadow-[0_8px_30px_rgba(41,36,50,0.08)] px-4 sm:px-6 h-14 flex items-center justify-between">
+        <nav className="max-w-5xl mx-auto rounded-full bg-white/25 backdrop-blur-2xl border border-white/55 shadow-[0_8px_32px_rgba(41,36,50,0.08),inset_0_1px_0_rgba(255,255,255,0.65)] px-4 sm:px-6 h-14 flex items-center justify-between">
           <a href="#" className="flex items-center gap-2.5 group">
             <div className="w-8 h-8 rounded-[9px] bg-white border border-[#292432]/10 shadow-xs flex items-center justify-center p-1 group-hover:scale-105 transition-transform">
               <ResusLogo className="w-full h-full" tile={false} />
@@ -148,14 +173,31 @@ export function App() {
       {/* Main Content */}
       <main className="relative z-10">
         {/* HERO SECTION */}
-        <section className="pt-14 sm:pt-20 pb-20 px-4 sm:px-6 max-w-6xl mx-auto text-center">
+        <section className="pt-10 sm:pt-14 pb-20 px-4 sm:px-6 max-w-6xl mx-auto text-center">
+          {/* Welcome-Card Style Centered Brand Hero Logo */}
           <motion.div
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45 }}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/75 border border-[#292432]/12 shadow-xs mb-7"
+            initial={{ opacity: 0, scale: 0.85, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+            className="mb-6 flex justify-center"
           >
-            <span className="w-2 h-2 rounded-full bg-[#1E6B48]" />
+            <motion.div
+              animate={{ y: [0, -6, 0] }}
+              transition={{ duration: 4.2, repeat: Infinity, ease: 'easeInOut' }}
+              whileHover={{ scale: 1.06, rotate: -2 }}
+              className="w-[88px] h-[88px] rounded-[22px] bg-white border border-[#827786]/25 shadow-[0_22px_45px_-10px_rgba(41,36,50,0.18)] flex items-center justify-center p-2.5 cursor-pointer"
+            >
+              <ResusLogo className="w-full h-full" tile={false} />
+            </motion.div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, delay: 0.05 }}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/60 backdrop-blur-md border border-[#292432]/12 shadow-xs mb-6"
+          >
+            <span className="w-2 h-2 rounded-full bg-[#1E6B48] animate-pulse" />
             <span className="text-xs font-semibold text-[#292432]">
               {release.version} Available · Windows 10 &amp; 11 (x64)
             </span>
@@ -240,15 +282,16 @@ export function App() {
             {FEATURE_CARDS.map((card, i) => (
               <motion.div
                 key={card.title}
-                initial={{ opacity: 0, y: 18 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
+                whileHover={{ y: -5, transition: { type: 'spring', stiffness: 320, damping: 22 } }}
                 viewport={{ once: true, margin: '-60px' }}
                 transition={{ duration: 0.4, delay: i * 0.05 }}
-                className="aurora-card rounded-[20px] p-6 flex flex-col justify-between"
+                className="aurora-card rounded-[20px] p-6 flex flex-col justify-between group"
               >
                 <div>
                   <div className="flex items-center justify-between mb-5">
-                    <div className="w-11 h-11 rounded-xl bg-[#E8DEF6]/80 border border-[#B9A2E8]/60 flex items-center justify-center">
+                    <div className="w-11 h-11 rounded-xl bg-[#E8DEF6]/80 border border-[#B9A2E8]/60 flex items-center justify-center group-hover:scale-110 group-hover:bg-[#E8DEF6] transition-all duration-200">
                       {card.icon}
                     </div>
                     <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-[#F5F0E8] border border-[#292432]/10 text-[#554B5D]">
@@ -306,16 +349,23 @@ export function App() {
 
               {/* Studio HUD Preview Mockup */}
               <div className="lg:col-span-6 space-y-4">
-                <div className="rounded-2xl bg-gradient-to-br from-[#F5F0E8] via-[#E8DEF6] to-[#F0E0E8] p-6 border border-[#292432]/12 shadow-inner space-y-4">
+                <div className="rounded-2xl bg-gradient-to-br from-[#F5F0E8]/85 via-[#E8DEF6]/80 to-[#F0E0E8]/85 p-6 border border-[#292432]/12 shadow-inner space-y-4">
                   {/* Floating HUD Bar Replica */}
                   <div className="rounded-full bg-[#FAF7F2]/95 border border-[#827786]/35 px-4 py-2.5 shadow-md flex items-center justify-between gap-3">
                     <div className="flex items-center gap-2.5">
                       <span className="w-2.5 h-2.5 rounded-full bg-[#9B2C48] animate-pulse" />
                       <span className="text-xs font-bold text-[#292432]">REC</span>
-                      <span className="font-mono text-xs font-semibold text-[#292432]">00:42</span>
-                      <span className="hidden sm:inline-flex px-2 py-0.5 rounded-md bg-[#B9A2E8]/35 border border-[#B9A2E8] text-[10.5px] font-semibold text-[#292432]">
-                        Focused · 1.65x
+                      <span className="font-mono text-xs font-semibold text-[#292432] tabular-nums">
+                        {formatTimer(elapsedSec)}
                       </span>
+                      <motion.span
+                        key={activePresetObj.name}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="hidden sm:inline-flex px-2 py-0.5 rounded-md bg-[#B9A2E8]/35 border border-[#B9A2E8] text-[10.5px] font-semibold text-[#292432]"
+                      >
+                        {activePresetObj.name} · {activePresetObj.scale}
+                      </motion.span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <span className="px-2.5 py-1 rounded-lg bg-[#F5F0E8] border border-[#827786]/30 text-[11px] font-semibold text-[#292432]">
@@ -330,29 +380,29 @@ export function App() {
                     </div>
                   </div>
 
-                  {/* Zoom Presets Row Replica */}
+                  {/* Interactive Zoom Presets Row Replica */}
                   <div className="grid grid-cols-5 gap-2">
-                    {[
-                      { name: 'Gentle', key: 'Ctrl+G', active: false },
-                      { name: 'Subtle', key: 'Ctrl+S', active: false },
-                      { name: 'Moderate', key: 'Ctrl+M', active: false },
-                      { name: 'Focused', key: 'Ctrl+F', active: true },
-                      { name: 'Intense', key: 'Ctrl+I', active: false },
-                    ].map((preset) => (
-                      <div
-                        key={preset.name}
-                        className={`rounded-xl p-2.5 text-center border transition-all ${
-                          preset.active
-                            ? 'bg-[#B9A2E8]/45 border-[#B9A2E8] shadow-xs'
-                            : 'bg-white/60 border-white/80'
-                        }`}
-                      >
-                        <div className="text-[11px] font-bold text-[#292432]">{preset.name}</div>
-                        <div className="text-[9.5px] font-mono text-[#554B5D] mt-0.5">
-                          {preset.key}
-                        </div>
-                      </div>
-                    ))}
+                    {ZOOM_PRESETS.map((preset) => {
+                      const isActive = preset.name === activeZoom;
+                      return (
+                        <motion.button
+                          key={preset.name}
+                          type="button"
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => setActiveZoom(preset.name)}
+                          className={`rounded-xl p-2.5 text-center border transition-all cursor-pointer ${
+                            isActive
+                              ? 'bg-[#B9A2E8]/45 border-[#B9A2E8] shadow-xs'
+                              : 'bg-white/60 hover:bg-white/85 border-white/80'
+                          }`}
+                        >
+                          <div className="text-[11px] font-bold text-[#292432]">{preset.name}</div>
+                          <div className="text-[9.5px] font-mono text-[#554B5D] mt-0.5">
+                            {preset.key}
+                          </div>
+                        </motion.button>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -399,9 +449,14 @@ export function App() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {SHORTCUTS.map((item, idx) => (
-                <div
+                <motion.div
                   key={idx}
-                  className="flex items-center justify-between gap-4 p-4 rounded-2xl bg-white/70 border border-[#292432]/10"
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  whileHover={{ y: -2, borderColor: 'rgba(185, 162, 232, 0.7)' }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.3, delay: idx * 0.05 }}
+                  className="flex items-center justify-between gap-4 p-4 rounded-2xl bg-white/70 border border-[#292432]/10 transition-colors"
                 >
                   <span className="text-[13.5px] font-medium text-[#292432]">{item.label}</span>
                   <div className="flex items-center gap-1 shrink-0">
@@ -414,7 +469,7 @@ export function App() {
                       </React.Fragment>
                     ))}
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -526,32 +581,45 @@ export function App() {
           </div>
         </section>
 
-        {/* FINAL DOWNLOAD CTA */}
+        {/* FINAL DOWNLOAD CTA (Visibly Translucent Aurora Card + Larger Crisp Black Logo) */}
         <section className="py-16 px-4 sm:px-6 max-w-5xl mx-auto">
-          <div className="rounded-[28px] bg-[#292432] text-[#F5F0E8] p-8 sm:p-14 text-center relative overflow-hidden shadow-2xl">
-            <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-[#B9A2E8]/20 blur-[80px] pointer-events-none" />
-            <div className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-[#D9A0B0]/20 blur-[80px] pointer-events-none" />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.45 }}
+            className="rounded-[28px] bg-gradient-to-br from-[#F5F0E8]/45 via-[#E8DEF6]/40 to-[#F0E0E8]/45 backdrop-blur-2xl border border-white/65 text-[#292432] p-8 sm:p-14 text-center relative overflow-hidden shadow-[0_24px_60px_-12px_rgba(41,36,50,0.14),inset_0_1px_0_rgba(255,255,255,0.75)]"
+          >
+            <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-[#B9A2E8]/35 blur-[80px] pointer-events-none" />
+            <div className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-[#D9A0B0]/35 blur-[80px] pointer-events-none" />
 
             <div className="relative z-10 max-w-2xl mx-auto">
-              <div className="w-14 h-14 rounded-2xl bg-white p-2 mx-auto mb-6 shadow-lg">
+              <motion.div
+                animate={{ y: [0, -5, 0] }}
+                transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
+                whileHover={{ scale: 1.07, rotate: 2 }}
+                className="w-20 h-20 rounded-[20px] bg-white border border-[#827786]/25 p-2.5 mx-auto mb-6 shadow-[0_14px_34px_-6px_rgba(41,36,50,0.16)] flex items-center justify-center"
+              >
                 <ResusLogo className="w-full h-full" tile={false} />
-              </div>
-              <h2 className="font-display text-3xl sm:text-4xl font-bold mb-3">
+              </motion.div>
+              <h2 className="font-display text-3xl sm:text-4xl font-bold mb-3 text-[#292432]">
                 Ready to upgrade your Windows workflow?
               </h2>
-              <p className="text-[#F5F0E8]/75 text-[15px] mb-8">
+              <p className="text-[#554B5D] text-[15px] mb-8">
                 Download Resus {release.version} for Windows 10 &amp; 11 and start your{' '}
                 {SITE_CONFIG.trialDays}-day free trial in under 30 seconds.
               </p>
-              <a
+              <motion.a
                 href={release.downloadUrl}
-                className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-2xl bg-[#F5F0E8] hover:bg-white text-[#292432] font-bold text-[15px] shadow-lg transition-all hover:scale-[1.02]"
+                whileHover={{ scale: 1.03, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-2xl bg-[#292432] hover:bg-[#3B3447] text-[#F5F0E8] font-bold text-[15px] shadow-[0_14px_32px_-8px_rgba(41,36,50,0.38)] transition-colors"
               >
                 <Download className="w-4 h-4" />
                 <span>Download Resus {release.version} (.exe)</span>
-              </a>
+              </motion.a>
             </div>
-          </div>
+          </motion.div>
         </section>
       </main>
 

@@ -19,7 +19,7 @@ const GLYPH_PATHS = [
 export const ResusLogo: React.FC<ResusLogoProps> = ({ className = 'w-9 h-9', tile = true }) => {
   if (!tile) {
     return (
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="140 240 744 540" className={className} fill="currentColor">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="140 240 744 540" className={className} fill="#000000">
         {GLYPH_PATHS.map((d, i) => (
           <path key={i} d={d} />
         ))}
