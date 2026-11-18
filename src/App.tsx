@@ -9,8 +9,6 @@ import {
   FolderCog,
   LayoutGrid,
   ShieldCheck,
-  Sparkles,
-  Check,
   Keyboard,
   ArrowUpRight,
   Monitor,
@@ -21,6 +19,7 @@ import {
 import { ResusLogo } from './components/ResusLogo';
 import { InteractiveCommandBar } from './components/InteractiveCommandBar';
 import { WorkflowShowcase } from './components/WorkflowShowcase';
+import { PricingSection } from './components/PricingSection';
 import { useLatestRelease } from './hooks/useLatestRelease';
 import { SITE_CONFIG } from './config/siteConfig';
 
@@ -98,14 +97,6 @@ export function App() {
   };
 
   const activePresetObj = ZOOM_PRESETS.find((z) => z.name === activeZoom) ?? ZOOM_PRESETS[3];
-
-  const handleProClick = () => {
-    if (SITE_CONFIG.dodoCheckoutUrl) {
-      window.open(SITE_CONFIG.dodoCheckoutUrl, '_blank', 'noopener,noreferrer');
-    } else {
-      setShowDodoModal(true);
-    }
-  };
 
   return (
     <div className="min-h-screen aurora-canvas relative selection:bg-[#B9A2E8]/40 selection:text-[#292432]">
@@ -476,110 +467,11 @@ export function App() {
         </section>
 
         {/* PRICING & DODO PAYMENTS SECTION */}
-        <section id="pricing" className="py-20 px-4 sm:px-6 max-w-5xl mx-auto">
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <span className="text-xs font-bold uppercase tracking-[0.16em] text-[#554B5D]">
-              Simple Pricing
-            </span>
-            <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#292432] mt-2">
-              Try everything free. Upgrade when ready.
-            </h2>
-            <p className="text-[15px] text-[#554B5D] mt-3">
-              Start with a full-featured {SITE_CONFIG.trialDays}-day free trial. Unlock Resus Pro
-              with a single license key via Dodo Payments.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-            {/* Free Trial Card */}
-            <div className="aurora-card rounded-[24px] p-8 flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm font-bold text-[#554B5D]">Free Trial</span>
-                  <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-[#F5F0E8] border border-[#292432]/10 text-[#292432]">
-                    No Card Required
-                  </span>
-                </div>
-                <div className="flex items-baseline gap-2 mb-2">
-                  <span className="font-display text-4xl font-extrabold text-[#292432]">$0</span>
-                  <span className="text-sm text-[#554B5D]">for {SITE_CONFIG.trialDays} days</span>
-                </div>
-                <p className="text-[14px] text-[#554B5D] mb-6">
-                  Full, unrestricted access to every Resus module from the moment you install.
-                </p>
-
-                <ul className="space-y-3 mb-8">
-                  {[
-                    'Command Bar & Smart Intent Suggestions',
-                    'Full Screen Studio with Auto-Zoom & ASMR Clicks',
-                    'Offline PDF & Media Conversion Suite',
-                    'Rapid Capture & Browser Multi-Tab Presets',
-                    'Automatic Updates via GitHub Releases',
-                  ].map((feat) => (
-                    <li key={feat} className="flex items-start gap-2.5 text-[13.5px] text-[#292432]">
-                      <Check className="w-4 h-4 text-[#1E6B48] shrink-0 mt-0.5" />
-                      <span>{feat}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <a
-                href={release.downloadUrl}
-                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#F5F0E8] hover:bg-white text-[#292432] border border-[#292432]/15 font-semibold text-sm transition-all"
-              >
-                <Download className="w-4 h-4" />
-                <span>Download Free Trial ({release.version})</span>
-              </a>
-            </div>
-
-            {/* Resus Pro Card (Dodo Payments) */}
-            <div className="rounded-[24px] p-8 flex flex-col justify-between bg-gradient-to-br from-[#FAF7F2] via-[#E8DEF6]/80 to-[#F0E0E8]/90 border-2 border-[#B9A2E8] shadow-[0_20px_50px_-12px_rgba(41,36,50,0.16)] relative">
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm font-bold text-[#292432]">Resus Pro</span>
-                  <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full bg-[#292432] text-[#F5F0E8]">
-                    <Sparkles className="w-3 h-3" />
-                    <span>Lifetime License</span>
-                  </span>
-                </div>
-                <div className="flex items-baseline gap-2 mb-2">
-                  <span className="font-display text-4xl font-extrabold text-[#292432]">
-                    {SITE_CONFIG.proPriceDisplay}
-                  </span>
-                  <span className="text-sm text-[#554B5D]">{SITE_CONFIG.proBillingLabel}</span>
-                </div>
-                <p className="text-[14px] text-[#554B5D] mb-6">
-                  Instant license key delivery via Dodo Payments. Activate right inside Resus.
-                </p>
-
-                <ul className="space-y-3 mb-8">
-                  {[
-                    'Everything in the Free Trial, unlocked forever',
-                    'Instant Pro License Key activation on your PC',
-                    'All future v1.x updates & new offline tools included',
-                    'Bring your own AI API keys (optional)',
-                    'Priority feature requests & support',
-                  ].map((feat) => (
-                    <li key={feat} className="flex items-start gap-2.5 text-[13.5px] text-[#292432]">
-                      <Check className="w-4 h-4 text-[#1E6B48] shrink-0 mt-0.5" />
-                      <span>{feat}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <button
-                type="button"
-                onClick={handleProClick}
-                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#292432] hover:bg-[#3B3447] text-[#F5F0E8] font-semibold text-sm shadow-md transition-all cursor-pointer hover:-translate-y-0.5"
-              >
-                <span>Get Resus Pro</span>
-                <ArrowUpRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        </section>
+        <PricingSection
+          downloadUrl={release.downloadUrl}
+          version={release.version}
+          onOpenDodoModal={() => setShowDodoModal(true)}
+        />
 
         {/* FINAL DOWNLOAD CTA (Visibly Translucent Aurora Card + Larger Crisp Black Logo) */}
         <section className="py-16 px-4 sm:px-6 max-w-5xl mx-auto">
@@ -684,13 +576,27 @@ export function App() {
                 <ResusLogo className="w-full h-full" tile={false} />
               </div>
 
-              <h3 className="font-display text-xl font-bold text-[#292432] mb-2">
-                Dodo Payments Checkout Coming Soon
+              <h3 className="font-display text-xl font-bold text-[#292432] mb-1">
+                Resus Pro · Perpetual Fallback
               </h3>
-              <p className="text-sm text-[#554B5D] leading-relaxed mb-5">
-                Pro checkout via Dodo Payments is being finalized. In the meantime, download Resus{' '}
-                {release.version} and enjoy full, unrestricted access with the{' '}
-                {SITE_CONFIG.trialDays}-day free trial!
+              <p className="text-xs font-semibold text-[#8B2346] mb-3">
+                Early Bird Offer: Code {SITE_CONFIG.pricing.earlyBirdCouponCode} (First {SITE_CONFIG.pricing.earlyBirdSeatsTotal} Customers)
+              </p>
+              <div className="rounded-xl bg-[#FAF7F2] p-3.5 border border-[#292432]/10 mb-4 text-xs space-y-1.5 text-[#3F3748]">
+                <div className="flex justify-between">
+                  <span>Tier 1 (Global / US, EU, UK):</span>
+                  <span className="font-bold text-[#292432]">$6 <span className="line-through text-[#827786] font-normal">$9</span></span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Tier 2 (PPP / India, LATAM, SEA):</span>
+                  <span className="font-bold text-[#292432]">$3 <span className="line-through text-[#827786] font-normal">$5</span></span>
+                </div>
+                <div className="text-[11px] text-[#554B5D] pt-1 border-t border-[#292432]/10">
+                  Pay once, keep forever · 1 full year of continuous updates included.
+                </div>
+              </div>
+              <p className="text-xs text-[#554B5D] leading-relaxed mb-5">
+                Dodo Payments product checkout link will be attached shortly. You can start right now with the {SITE_CONFIG.trialDays}-day unrestricted free trial!
               </p>
 
               <div className="flex items-center gap-3">
