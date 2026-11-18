@@ -23,6 +23,7 @@ import { ResusLogo } from './components/ResusLogo';
 import { InteractiveCommandBar } from './components/InteractiveCommandBar';
 import { WorkflowShowcase } from './components/WorkflowShowcase';
 import { PricingSection } from './components/PricingSection';
+import { LegalModal, type LegalDocType } from './components/LegalModal';
 import { useLatestRelease } from './hooks/useLatestRelease';
 import { SITE_CONFIG } from './config/siteConfig';
 
@@ -83,6 +84,7 @@ const ZOOM_PRESETS = [
 export function App() {
   const release = useLatestRelease();
   const [showDodoModal, setShowDodoModal] = useState(false);
+  const [activeLegalDoc, setActiveLegalDoc] = useState<LegalDocType>(null);
   const [successLicenseKey, setSuccessLicenseKey] = useState<string | null>(null);
   const [copiedSuccessKey, setCopiedSuccessKey] = useState(false);
   const [activeZoom, setActiveZoom] = useState('Focused');
@@ -534,7 +536,7 @@ export function App() {
 
       {/* FOOTER */}
       <footer className="relative z-10 border-t border-[#292432]/10 mt-10 py-10 px-4 sm:px-6">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#554B5D]">
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-[#554B5D]">
           <div className="flex items-center gap-2.5">
             <div className="w-6 h-6 rounded-md bg-white border border-[#292432]/10 p-0.5 flex items-center justify-center">
               <ResusLogo className="w-full h-full" tile={false} />
@@ -544,7 +546,7 @@ export function App() {
             <span>A growing toolkit packed with useful features.</span>
           </div>
 
-          <div className="flex items-center gap-5 font-medium">
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-medium">
             <a href="#features" className="hover:text-[#292432] transition-colors">
               Features
             </a>
@@ -558,6 +560,34 @@ export function App() {
               className="hover:text-[#292432] transition-colors"
             >
               GitHub Releases
+            </a>
+            <span className="text-[#292432]/20 hidden sm:inline">|</span>
+            <button
+              type="button"
+              onClick={() => setActiveLegalDoc('privacy')}
+              className="hover:text-[#292432] transition-colors cursor-pointer"
+            >
+              Privacy Policy
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveLegalDoc('terms')}
+              className="hover:text-[#292432] transition-colors cursor-pointer"
+            >
+              Terms of Service
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveLegalDoc('refund')}
+              className="hover:text-[#292432] transition-colors cursor-pointer"
+            >
+              Refund Policy
+            </button>
+            <a
+              href={`mailto:${SITE_CONFIG.supportEmail}`}
+              className="hover:text-[#292432] transition-colors"
+            >
+              Support
             </a>
           </div>
         </div>
@@ -763,6 +793,12 @@ export function App() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <LegalModal
+        activeDoc={activeLegalDoc}
+        onClose={() => setActiveLegalDoc(null)}
+        onSwitchDoc={setActiveLegalDoc}
+      />
     </div>
   );
 }

@@ -7,9 +7,10 @@ export const SITE_CONFIG = {
   releasesRepo: 'Faraz643/resus-releases',
   releasesApiUrl: 'https://api.github.com/repos/Faraz643/resus-releases/releases/latest',
   releasesPageUrl: 'https://github.com/Faraz643/resus-releases/releases',
-  fallbackVersion: 'v1.0.23',
+  fallbackVersion: 'v1.0.24',
   fallbackDownloadUrl:
-    'https://github.com/Faraz643/resus-releases/releases/download/v1.0.23/Resus-Setup-1.0.23.exe',
+    'https://github.com/Faraz643/resus-releases/releases/download/v1.0.24/Resus-Setup-1.0.24.exe',
+  supportEmail: 'farazrasool643@gmail.com',
 
   // 7-Day Zero Friction Trial
   trialDays: 7,
