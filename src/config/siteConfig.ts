@@ -10,7 +10,7 @@ export const SITE_CONFIG = {
   fallbackVersion: 'v1.0.24',
   fallbackDownloadUrl:
     'https://github.com/Faraz643/resus-releases/releases/download/v1.0.24/Resus-Setup-1.0.24.exe',
-  supportEmail: 'farazrasool643@gmail.com',
+  supportEmail: 'support@resus.space',
 
   // 7-Day Zero Friction Trial
   trialDays: 7,

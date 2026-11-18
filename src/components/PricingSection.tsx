@@ -107,7 +107,11 @@ export function PricingSection({ downloadUrl, version, onOpenDodoModal }: Pricin
 
   const handleCheckout = () => {
     if (SITE_CONFIG.dodoCheckoutUrl) {
-      const redirectParam = `redirect_url=${encodeURIComponent('https://faraz643.github.io/resus/')}`;
+      const currentUrl =
+        typeof window !== 'undefined'
+          ? `${window.location.origin}${window.location.pathname}`
+          : 'https://resus.space/';
+      const redirectParam = `redirect_url=${encodeURIComponent(currentUrl)}`;
       const separator = SITE_CONFIG.dodoCheckoutUrl.includes('?') ? '&' : '?';
       const checkoutUrlWithCoupon = `${SITE_CONFIG.dodoCheckoutUrl}${separator}coupon=${couponCode}&${redirectParam}`;
       window.open(checkoutUrlWithCoupon, '_blank', 'noopener,noreferrer');
