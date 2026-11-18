@@ -17,13 +17,15 @@ export const SITE_CONFIG = {
   // Monetization & Dodo Payments Architecture
   pricing: {
     model: 'Pay Once, Own Forever',
-    modelDescription: 'Pay once, own forever. Includes 1 full year of software updates.',
+    modelDescription: 'Pay once, own forever. Includes 6 months of software updates. Valid on up to 2 PCs.',
     earlyBirdSeatsTotal: 20,
     earlyBirdCouponCode: 'EARLY20',
     standardPrice: 9,
     earlyBirdPrice: 6,
     currencySymbol: '$',
     discountPercent: '33% OFF',
+    deviceLimit: 2,
+    updatesMonths: 6,
   },
 
   // Dodo Payments Configuration

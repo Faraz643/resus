@@ -593,7 +593,7 @@ export function App() {
                   </span>
                 </div>
                 <div className="text-[11px] text-[#554B5D] pt-1 border-t border-[#292432]/10">
-                  Pay once, own forever · 1 full year of continuous updates included.
+                  Pay once, own forever · 6 months of continuous updates included · Valid on 2 PCs.
                 </div>
               </div>
               <p className="text-xs text-[#554B5D] leading-relaxed mb-5">

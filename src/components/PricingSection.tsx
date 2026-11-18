@@ -207,7 +207,7 @@ export function PricingSection({ downloadUrl, version, onOpenDodoModal }: Pricin
           <div>
             <div className="flex items-center justify-between mb-4">
               <span className="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-[#B9A2E8]/30 text-[#292432] border border-[#B9A2E8]/60">
-                1 Year Updates + Keep Forever
+                6 Months Updates + Keep Forever
               </span>
               <span className="text-xs font-semibold text-[#8B2346]">
                 Launch Discount Active
@@ -218,7 +218,7 @@ export function PricingSection({ downloadUrl, version, onOpenDodoModal }: Pricin
               Resus Pro
             </h3>
             <p className="text-xs text-[#554B5D] mb-6">
-              Pay once. Includes 1 full year of continuous updates, and keep your version forever.
+              Pay once. Includes 6 months of continuous updates, and keep your version forever.
             </p>
 
             <div className="flex items-baseline gap-3 mb-6">
@@ -247,14 +247,14 @@ export function PricingSection({ downloadUrl, version, onOpenDodoModal }: Pricin
               <li className="flex items-start gap-2.5">
                 <Clock className="w-4 h-4 text-[#292432] shrink-0 mt-0.5" />
                 <span>
-                  <strong>1 Year of Continuous Updates:</strong> Every new feature, optimization,
-                  and tool released for 365 days.
+                  <strong>6 Months of Continuous Updates:</strong> Every new feature, optimization,
+                  and tool released for 180 days.
                 </span>
               </li>
               <li className="flex items-start gap-2.5">
                 <InfinityIcon className="w-4 h-4 text-[#292432] shrink-0 mt-0.5" />
                 <span>
-                  <strong>Valid on up to 3 PCs:</strong> Use your license key across your personal
+                  <strong>Valid on up to 2 PCs:</strong> Use your license key across your personal
                   desktop and laptop.
                 </span>
               </li>
@@ -291,8 +291,8 @@ export function PricingSection({ downloadUrl, version, onOpenDodoModal }: Pricin
             </h4>
           </div>
           <p className="text-xs text-[#554B5D] leading-relaxed">
-            When you purchase Resus Pro, you own that version for life. You also receive 1 year of
-            all new features, updates, and speed improvements. When that year ends, you can continue
+            When you purchase Resus Pro, you own that version for life. You also receive 6 months of
+            all new features, updates, and speed improvements. When those 6 months end, you can continue
             using your version forever without paying another cent, or optionally renew updates later
             at a heavy discount.
           </p>
@@ -306,8 +306,8 @@ export function PricingSection({ downloadUrl, version, onOpenDodoModal }: Pricin
             </h4>
           </div>
           <p className="text-xs text-[#554B5D] leading-relaxed">
-            Yes! A single Resus Pro license key can be activated on up to 3 of your personal Windows
-            devices (for example, your main desktop, personal laptop, and work machine) simultaneously.
+            Yes! A single Resus Pro license key can be activated on up to 2 of your personal Windows
+            devices (for example, your main desktop and personal laptop) simultaneously.
           </p>
         </div>
       </div>
