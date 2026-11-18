@@ -685,7 +685,7 @@ export function App() {
               </div>
 
               <p className="text-xs text-[#554B5D] leading-relaxed mb-5">
-                Thank you for supporting Resus! Your lifetime license includes 6 months of continuous updates and can be activated on up to 2 personal PCs.
+                Thank you for choosing Resus! Your lifetime license includes 6 months of continuous updates and can be activated on up to 2 personal PCs.
               </p>
 
               {/* License Key Box */}
@@ -735,7 +735,7 @@ export function App() {
                     Press <kbd className="px-1.5 py-0.5 rounded bg-white border border-[#292432]/20 text-[11px] font-mono text-[#292432]">Alt + Space</kbd> to open Resus
                   </li>
                   <li>
-                    Click the tray icon or command bar menu $\rightarrow$ <strong className="text-[#292432]">License & Trial...</strong>
+                    Click the tray icon or command bar menu → <strong className="text-[#292432]">License & Trial...</strong>
                   </li>
                   <li>
                     Paste your license key and click <strong className="text-[#292432]">Activate License</strong>
