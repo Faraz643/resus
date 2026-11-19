@@ -272,7 +272,10 @@ export function App() {
           </p>
 
           {/* Interactive Live Command Bar */}
-          <div className="mt-14">
+          <div className="mt-16 sm:mt-20">
+            <h2 className="font-display text-xl sm:text-2xl lg:text-[24px] font-semibold text-[#292432] max-w-2xl mx-auto mb-6 text-center leading-snug tracking-tight">
+              Everything you used to open five different apps or websites for—unified into one fast, native Windows command center.
+            </h2>
             <InteractiveCommandBar />
           </div>
         </section>
@@ -287,8 +290,7 @@ export function App() {
               Small command. Big possibilities.
             </h2>
             <p className="text-[15px] text-[#554B5D] mt-3">
-              Everything you used to open five different apps or websites for—unified into one fast,
-              native Windows command center.
+              Instant offline utilities, smart system automations, and distraction-free developer workflows built right into your keyboard.
             </p>
           </div>
 

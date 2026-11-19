@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
 import {
   Video,
   FileText,
@@ -142,9 +142,12 @@ export const InteractiveCommandBar: React.FC = () => {
 
   // Simulated cursor & ripple particles
   const [cursorPos, setCursorPos] = useState({ x: 380, y: 160 });
-  const [isCursorVisible, setIsCursorVisible] = useState(true);
+  const [isCursorVisible, setIsCursorVisible] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
   const [ripples, setRipples] = useState<RippleWave[]>([]);
+
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const isInView = useInView(containerRef, { once: false, amount: 0.25 });
 
   const inputRef = useRef<HTMLInputElement | null>(null);
   const userIdleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -198,7 +201,10 @@ export const InteractiveCommandBar: React.FC = () => {
 
   // Main Demo Video Animation Timeline
   useEffect(() => {
-    if (isUserActive) return;
+    if (isUserActive || !isInView) {
+      setIsCursorVisible(false);
+      return;
+    }
 
     let isCancelled = false;
     const scene = DEMO_SCENES[sceneIndex];
@@ -409,7 +415,7 @@ export const InteractiveCommandBar: React.FC = () => {
       isCancelled = true;
       if (timelineTimeoutRef.current) clearTimeout(timelineTimeoutRef.current);
     };
-  }, [sceneIndex, isUserActive]);
+  }, [sceneIndex, isUserActive, isInView]);
 
   // Handle user manual interaction (pauses video, allows direct typing)
   const handleUserInteract = () => {
@@ -449,7 +455,7 @@ export const InteractiveCommandBar: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-[660px] mx-auto">
+    <div ref={containerRef} className="w-full max-w-[660px] mx-auto">
       {/* Main Resus Video Simulation Container */}
       <div className="relative">
         {/* Animated Simulated OS Cursor Pointer */}
