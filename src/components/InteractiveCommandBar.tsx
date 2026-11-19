@@ -616,18 +616,13 @@ export const InteractiveCommandBar: React.FC = () => {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className="border-t border-[#827786]/15 px-5 py-3.5 bg-[#FAF7F2]/90"
+                className="border-t border-[#827786]/15 px-5 py-3 bg-[#FAF7F2]/90"
               >
-                <div className="flex items-start gap-3">
-                  <CheckCircle2 className="w-4 h-4 text-[#1E6B48] shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-[13.5px] font-semibold text-[#292432]">
-                      {activeResult.result}
-                    </p>
-                    <p className="text-[12px] text-[#554B5D] mt-0.5 font-mono">
-                      {activeResult.detail}
-                    </p>
-                  </div>
+                <div className="flex items-center gap-2.5">
+                  <CheckCircle2 className="w-4 h-4 text-[#1E6B48] shrink-0" />
+                  <p className="text-[13.5px] font-semibold text-[#292432] truncate">
+                    {activeResult.result}
+                  </p>
                 </div>
               </motion.div>
             )}
