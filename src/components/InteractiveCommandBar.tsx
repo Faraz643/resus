@@ -9,10 +9,6 @@ import {
   X,
   CheckCircle2,
   PlayCircle,
-  Play,
-  Pause,
-  RotateCcw,
-  Sparkles,
 } from 'lucide-react';
 import { ResusLogo } from './ResusLogo';
 
@@ -31,7 +27,6 @@ export interface DemoScene {
   id: string;
   label: string;
   command: string;
-  isBrowserAction?: boolean;
   item: CommandItem;
 }
 
@@ -40,7 +35,6 @@ export const DEMO_SCENES: DemoScene[] = [
     id: 'browser_preset',
     label: 'Browser Dev Preset',
     command: 'dev',
-    isBrowserAction: true,
     item: {
       id: 'browser_preset',
       command: 'dev',
@@ -56,7 +50,6 @@ export const DEMO_SCENES: DemoScene[] = [
     id: 'youtube_search',
     label: 'YouTube Search Query',
     command: 'youtube python programming',
-    isBrowserAction: true,
     item: {
       id: 'youtube_search',
       command: 'youtube python programming',
@@ -138,15 +131,17 @@ interface RippleWave {
 
 export const InteractiveCommandBar: React.FC = () => {
   const [sceneIndex, setSceneIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(true);
   const [query, setQuery] = useState('');
   const [browserMode, setBrowserMode] = useState(false);
   const [activeResult, setActiveResult] = useState<CommandItem | null>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isUserActive, setIsUserActive] = useState(false);
 
-  // Simulated cursor & ripple states
-  const [cursorPos, setCursorPos] = useState({ x: 320, y: 180 });
+  // Ripple effect enabled state (only becomes true after 'click ripple' executes)
+  const [isRippleFeatureActive, setIsRippleFeatureActive] = useState(false);
+
+  // Simulated cursor & ripple particles
+  const [cursorPos, setCursorPos] = useState({ x: 380, y: 160 });
   const [isCursorVisible, setIsCursorVisible] = useState(true);
   const [isClicking, setIsClicking] = useState(false);
   const [ripples, setRipples] = useState<RippleWave[]>([]);
@@ -157,7 +152,7 @@ export const InteractiveCommandBar: React.FC = () => {
 
   const activeScene = DEMO_SCENES[sceneIndex];
 
-  // Spawn visual ripple wave
+  // Spawn visual ripple wave (called only when ripple effect is active)
   const spawnRipple = (x: number, y: number) => {
     const id = Date.now() + Math.random();
     setRipples((prev) => [...prev.slice(-5), { id, x, y }]);
@@ -166,14 +161,24 @@ export const InteractiveCommandBar: React.FC = () => {
     }, 900);
   };
 
-  // Suggestions drawer list: always keeps active item highlighted with surrounding context
+  // Click handler that checks whether ripple feature is active
+  const triggerClick = (x: number, y: number, forceRipple = false) => {
+    setIsClicking(true);
+    if (isRippleFeatureActive || forceRipple) {
+      spawnRipple(x, y);
+    }
+    setTimeout(() => {
+      setIsClicking(false);
+    }, 160);
+  };
+
+  // Suggestions drawer list: keeps active item highlighted with surrounding context
   const displayItems = useMemo(() => {
     const q = query.trim().toLowerCase();
     const catalog = DEMO_SCENES.map((s) => s.item);
 
     if (!q) {
       if (!isUserActive) {
-        // Center window around current scene item
         const curIdx = sceneIndex;
         if (curIdx < 3) return catalog.slice(0, 4);
         return catalog.slice(curIdx - 2, curIdx + 2);
@@ -193,7 +198,7 @@ export const InteractiveCommandBar: React.FC = () => {
 
   // Main Demo Video Animation Timeline
   useEffect(() => {
-    if (isUserActive || !isPlaying) return;
+    if (isUserActive) return;
 
     let isCancelled = false;
     const scene = DEMO_SCENES[sceneIndex];
@@ -211,64 +216,58 @@ export const InteractiveCommandBar: React.FC = () => {
     setSelectedIndex(0);
 
     if (scene.id === 'browser_preset') {
-      // Scene 1: Cursor moves to Browser Icon, clicks it to activate, then types 'dev'
+      // Starting the loop: reset ripple feature to false until 'click ripple' is typed
+      setIsRippleFeatureActive(false);
       setBrowserMode(false);
-      setCursorPos({ x: 380, y: 180 });
+      setCursorPos({ x: 380, y: 160 });
 
       // Move cursor to globe button
       safeTimeout(() => {
         setCursorPos({ x: 54, y: 29 }); // Globe icon coordinate
 
-        // Click globe icon
+        // Click globe icon (no ripple yet because ripple is not yet activated)
         safeTimeout(() => {
-          setIsClicking(true);
+          triggerClick(54, 29, false);
           setBrowserMode(true);
-          spawnRipple(54, 29);
 
+          // Move cursor to input field
           safeTimeout(() => {
-            setIsClicking(false);
+            setCursorPos({ x: 135, y: 29 });
 
-            // Move cursor to input field
+            // Type 'dev'
             safeTimeout(() => {
-              setCursorPos({ x: 135, y: 29 });
+              let charIndex = 0;
+              const text = 'dev';
+              const typeDev = () => {
+                if (isCancelled) return;
+                if (charIndex < text.length) {
+                  charIndex++;
+                  setQuery(text.slice(0, charIndex));
+                  safeTimeout(typeDev, 90);
+                } else {
+                  // Executed: show Dev Preset result
+                  safeTimeout(() => {
+                    setActiveResult(scene.item);
 
-              // Type 'dev'
-              safeTimeout(() => {
-                let charIndex = 0;
-                const text = 'dev';
-                const typeDev = () => {
-                  if (isCancelled) return;
-                  if (charIndex < text.length) {
-                    charIndex++;
-                    setQuery(text.slice(0, charIndex));
-                    safeTimeout(typeDev, 90);
-                  } else {
-                    // Executed: show Dev Preset result
+                    // Hold result drawer
                     safeTimeout(() => {
-                      setActiveResult(scene.item);
-
-                      // Hold result drawer
+                      // Move cursor to clear button
+                      setCursorPos({ x: 26, y: 29 });
                       safeTimeout(() => {
-                        // Move cursor to clear button
-                        setCursorPos({ x: 26, y: 29 });
+                        triggerClick(26, 29, false);
+                        setQuery('');
+                        setActiveResult(null);
                         safeTimeout(() => {
-                          setIsClicking(true);
-                          spawnRipple(26, 29);
-                          setQuery('');
-                          setActiveResult(null);
-                          safeTimeout(() => {
-                            setIsClicking(false);
-                            setSceneIndex((prev) => (prev + 1) % DEMO_SCENES.length);
-                          }, 250);
-                        }, 400);
-                      }, 2400);
-                    }, 500);
-                  }
-                };
-                typeDev();
-              }, 300);
-            }, 450);
-          }, 180);
+                          setSceneIndex((prev) => (prev + 1) % DEMO_SCENES.length);
+                        }, 250);
+                      }, 400);
+                    }, 2400);
+                  }, 500);
+                }
+              };
+              typeDev();
+            }, 300);
+          }, 450);
         }, 600);
       }, 400);
     } else if (scene.id === 'youtube_search') {
@@ -294,13 +293,11 @@ export const InteractiveCommandBar: React.FC = () => {
                 // Clear and reset browser mode
                 setCursorPos({ x: 26, y: 29 });
                 safeTimeout(() => {
-                  setIsClicking(true);
-                  spawnRipple(26, 29);
+                  triggerClick(26, 29, false);
                   setQuery('');
                   setActiveResult(null);
                   setBrowserMode(false);
                   safeTimeout(() => {
-                    setIsClicking(false);
                     setSceneIndex((prev) => (prev + 1) % DEMO_SCENES.length);
                   }, 250);
                 }, 400);
@@ -325,59 +322,46 @@ export const InteractiveCommandBar: React.FC = () => {
             setQuery(text.slice(0, charIndex));
             safeTimeout(typeRipple, 55);
           } else {
-            // Execute command
+            // Execute command -> RIPPLE EFFECT IS NOW ENABLED!
             safeTimeout(() => {
               setActiveResult(scene.item);
+              setIsRippleFeatureActive(true); // <--- Activated only now!
 
-              // Now showcase cursor clicking in 3 different spots to demonstrate ripples!
+              // Showcase cursor clicking in 3 different spots with visible ripple waves
               safeTimeout(() => {
                 // Click Spot 1
                 setCursorPos({ x: 140, y: 195 });
                 safeTimeout(() => {
-                  setIsClicking(true);
-                  spawnRipple(140, 195);
+                  triggerClick(140, 195, true);
+
+                  // Click Spot 2
                   safeTimeout(() => {
-                    setIsClicking(false);
-
-                    // Click Spot 2
+                    setCursorPos({ x: 380, y: 140 });
                     safeTimeout(() => {
-                      setCursorPos({ x: 380, y: 140 });
+                      triggerClick(380, 140, true);
+
+                      // Click Spot 3
                       safeTimeout(() => {
-                        setIsClicking(true);
-                        spawnRipple(380, 140);
+                        setCursorPos({ x: 510, y: 210 });
                         safeTimeout(() => {
-                          setIsClicking(false);
+                          triggerClick(510, 210, true);
 
-                          // Click Spot 3
+                          // Finish ripple scene & advance
                           safeTimeout(() => {
-                            setCursorPos({ x: 510, y: 210 });
+                            setCursorPos({ x: 26, y: 29 });
                             safeTimeout(() => {
-                              setIsClicking(true);
-                              spawnRipple(510, 210);
+                              triggerClick(26, 29, true);
+                              setQuery('');
+                              setActiveResult(null);
                               safeTimeout(() => {
-                                setIsClicking(false);
-
-                                // Finish ripple scene & advance
-                                safeTimeout(() => {
-                                  setCursorPos({ x: 26, y: 29 });
-                                  safeTimeout(() => {
-                                    setIsClicking(true);
-                                    spawnRipple(26, 29);
-                                    setQuery('');
-                                    setActiveResult(null);
-                                    safeTimeout(() => {
-                                      setIsClicking(false);
-                                      setSceneIndex((prev) => (prev + 1) % DEMO_SCENES.length);
-                                    }, 250);
-                                  }, 400);
-                                }, 900);
-                              }, 150);
-                            }, 500);
-                          }, 350);
-                        }, 150);
-                      }, 500);
-                    }, 350);
-                  }, 150);
+                                setSceneIndex((prev) => (prev + 1) % DEMO_SCENES.length);
+                              }, 250);
+                            }, 400);
+                          }, 900);
+                        }, 500);
+                      }, 350);
+                    }, 500);
+                  }, 350);
                 }, 450);
               }, 700);
             }, 550);
@@ -406,12 +390,10 @@ export const InteractiveCommandBar: React.FC = () => {
               safeTimeout(() => {
                 setCursorPos({ x: 26, y: 29 });
                 safeTimeout(() => {
-                  setIsClicking(true);
-                  spawnRipple(26, 29);
+                  triggerClick(26, 29, isRippleFeatureActive);
                   setQuery('');
                   setActiveResult(null);
                   safeTimeout(() => {
-                    setIsClicking(false);
                     setSceneIndex((prev) => (prev + 1) % DEMO_SCENES.length);
                   }, 250);
                 }, 400);
@@ -427,7 +409,7 @@ export const InteractiveCommandBar: React.FC = () => {
       isCancelled = true;
       if (timelineTimeoutRef.current) clearTimeout(timelineTimeoutRef.current);
     };
-  }, [sceneIndex, isPlaying, isUserActive]);
+  }, [sceneIndex, isUserActive]);
 
   // Handle user manual interaction (pauses video, allows direct typing)
   const handleUserInteract = () => {
@@ -468,84 +450,6 @@ export const InteractiveCommandBar: React.FC = () => {
 
   return (
     <div className="w-full max-w-[660px] mx-auto">
-      {/* Interactive Video Navigation Controls Bar */}
-      <div className="mb-3.5 flex flex-wrap items-center justify-between gap-2 px-1">
-        {/* Play / Pause Toggle Badge */}
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => {
-              if (isUserActive) {
-                setIsUserActive(false);
-                setIsPlaying(true);
-              } else {
-                setIsPlaying((v) => !v);
-              }
-            }}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/70 hover:bg-white border border-[#292432]/12 text-[#292432] text-[11.5px] font-semibold shadow-xs transition-colors cursor-pointer"
-            title={isPlaying && !isUserActive ? 'Pause Video Demo' : 'Play Video Demo'}
-          >
-            {isPlaying && !isUserActive ? (
-              <>
-                <span className="w-2 h-2 rounded-full bg-[#FF5722] animate-pulse" />
-                <Pause className="w-3 h-3 text-[#FF5722]" />
-                <span>Playing Video Demo</span>
-              </>
-            ) : (
-              <>
-                <Play className="w-3 h-3 text-[#1E6B48] fill-current" />
-                <span>Resume Video Demo</span>
-              </>
-            )}
-          </button>
-
-          {isUserActive && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#FFF0EB] border border-[#FF5722]/30 text-[#FF5722] text-[11px] font-medium">
-              <Sparkles className="w-3 h-3" />
-              <span>Interactive Test Mode</span>
-            </span>
-          )}
-        </div>
-
-        {/* Scene Selector Pills */}
-        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-0.5">
-          {DEMO_SCENES.map((scene, idx) => {
-            const isActive = idx === sceneIndex && !isUserActive;
-            return (
-              <button
-                key={scene.id}
-                type="button"
-                onClick={() => {
-                  setIsUserActive(false);
-                  setIsPlaying(true);
-                  setSceneIndex(idx);
-                }}
-                className={`px-2.5 py-1 rounded-[9px] text-[11px] font-medium transition-all shrink-0 cursor-pointer ${
-                  isActive
-                    ? 'bg-[#292432] text-white shadow-xs'
-                    : 'bg-white/50 hover:bg-white text-[#554B5D] border border-transparent hover:border-[#827786]/20'
-                }`}
-              >
-                {scene.label}
-              </button>
-            );
-          })}
-
-          <button
-            type="button"
-            onClick={() => {
-              setIsUserActive(false);
-              setIsPlaying(true);
-              setSceneIndex(0);
-            }}
-            title="Restart Demo"
-            className="w-7 h-7 rounded-[8px] bg-white/60 hover:bg-white border border-[#827786]/20 flex items-center justify-center text-[#554B5D] hover:text-[#292432] transition-colors shrink-0 cursor-pointer ml-1"
-          >
-            <RotateCcw className="w-3 h-3" />
-          </button>
-        </div>
-      </div>
-
       {/* Main Resus Video Simulation Container */}
       <div className="relative">
         {/* Animated Simulated OS Cursor Pointer */}
