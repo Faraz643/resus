@@ -126,7 +126,7 @@ export const InteractiveCommandBar: React.FC = () => {
             key={item.id}
             type="button"
             onClick={() => handleRun(item)}
-            className="text-xs font-mono font-medium px-3 py-1 rounded-full bg-[#F5F0E8]/90 hover:bg-white text-[#292432] border border-[#292432]/12 hover:border-[#B9A2E8] transition-all cursor-pointer shadow-xs"
+            className="text-xs font-mono font-medium px-3 py-1 rounded-full bg-[#EDF8F2]/90 hover:bg-white text-[#292432] border border-[#292432]/12 hover:border-[#7BC8A4] transition-all cursor-pointer shadow-xs"
           >
             {item.command}
           </button>
@@ -141,10 +141,33 @@ export const InteractiveCommandBar: React.FC = () => {
         className="resus-pill rounded-[28px] overflow-hidden text-left"
       >
         {/* Top Input Capsule Row */}
-        <div className="h-[58px] px-4 sm:px-5 flex items-center gap-3.5">
-          {/* Logo Tile */}
-          <div className="w-9 h-9 rounded-[9px] bg-white border border-[#292432]/10 shadow-sm flex items-center justify-center shrink-0 p-1">
-            <ResusLogo className="w-full h-full" tile={false} />
+        <div className="h-[58px] px-4 sm:px-5 flex items-center gap-3">
+          {/* Left Controls: Clear (X) Button + Minimal Globe Browser Toggle */}
+          <div className="flex items-center gap-1.5 shrink-0">
+            <button
+              type="button"
+              onClick={() => {
+                setQuery('');
+                setActiveResult(null);
+              }}
+              title="Clear"
+              className="w-[28px] h-[28px] rounded-full bg-[#EDF8F2]/90 border border-[#827786]/30 hover:bg-white hover:border-[#7BC8A4] flex items-center justify-center transition-colors cursor-pointer"
+            >
+              <X className="w-3.5 h-3.5 text-[#292432]" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setBrowserMode((v) => !v)}
+              title="Toggle Browser Mode"
+              className={`w-[30px] h-[30px] rounded-full border flex items-center justify-center transition-all cursor-pointer ${
+                browserMode
+                  ? 'bg-[#E5F5ED] border-[#7BC8A4] text-[#1E6B48] shadow-[0_0_12px_rgba(123,200,164,0.55)]'
+                  : 'bg-[#EDF8F2]/90 border-[#827786]/30 hover:bg-white hover:border-[#7BC8A4] text-[#292432]'
+              }`}
+            >
+              <Globe className="w-4 h-4" />
+            </button>
           </div>
 
           {/* Input */}
@@ -162,36 +185,15 @@ export const InteractiveCommandBar: React.FC = () => {
             className="flex-1 bg-transparent text-[#292432] placeholder-[#554B5D] text-[16.5px] font-medium focus:outline-none min-w-0"
           />
 
-          {/* Right Controls */}
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="hidden sm:inline-flex items-center px-2.5 py-1 rounded-[11px] bg-[#F5F0E8]/90 border border-[#827786]/30 text-[11px] font-semibold text-[#292432]">
+          {/* Right Controls: Context Badge + Logo Squircle Tile */}
+          <div className="flex items-center gap-2.5 shrink-0">
+            <span className="hidden sm:inline-flex items-center px-2.5 py-1 rounded-[11px] bg-[#EDF8F2]/90 border border-[#827786]/30 text-[11px] font-semibold text-[#292432]">
               In Desktop
             </span>
 
-            <button
-              type="button"
-              onClick={() => setBrowserMode((v) => !v)}
-              title="Toggle Browser Mode"
-              className={`w-[30px] h-[30px] rounded-full border flex items-center justify-center transition-all cursor-pointer ${
-                browserMode
-                  ? 'bg-[#E8DEF6] border-[#B9A2E8] shadow-[0_0_12px_rgba(185,162,232,0.5)]'
-                  : 'bg-[#F5F0E8]/90 border-[#827786]/30 hover:bg-[#F5F0E8]'
-              }`}
-            >
-              <Globe className="w-4 h-4 text-[#292432]" />
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setQuery('');
-                setActiveResult(null);
-              }}
-              title="Clear"
-              className="w-[28px] h-[28px] rounded-full bg-[#F5F0E8]/90 border border-[#827786]/30 hover:bg-[#F5F0E8] flex items-center justify-center transition-colors cursor-pointer"
-            >
-              <X className="w-3.5 h-3.5 text-[#292432]" />
-            </button>
+            <div className="w-9 h-9 rounded-[9px] bg-white border border-[#292432]/10 shadow-sm flex items-center justify-center shrink-0 p-1">
+              <ResusLogo className="w-full h-full" tile={false} />
+            </div>
           </div>
         </div>
 
@@ -241,18 +243,18 @@ export const InteractiveCommandBar: React.FC = () => {
                   onMouseEnter={() => setSelectedIndex(idx)}
                   className={`w-full flex items-center gap-3 px-2.5 py-2 rounded-[11px] border text-left transition-all cursor-pointer ${
                     isSelected
-                      ? 'bg-[#E8DEF6]/90 border-[#B9A2E8]'
-                      : 'bg-transparent border-transparent hover:bg-[#F5F0E8]/85 hover:border-[#827786]/30'
+                      ? 'bg-[#E5F5ED]/95 border-[#7BC8A4]'
+                      : 'bg-transparent border-transparent hover:bg-[#EDF8F2]/85 hover:border-[#7BC8A4]/40'
                   }`}
                 >
-                  <div className="w-8 h-8 rounded-[9px] bg-[#F5F0E8] border border-[#827786]/30 flex items-center justify-center shrink-0">
+                  <div className="w-8 h-8 rounded-[9px] bg-[#EDF8F2] border border-[#827786]/30 flex items-center justify-center shrink-0">
                     {item.icon}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-[13px] font-semibold text-[#292432] truncate">{item.title}</div>
                     <div className="text-[11.5px] text-[#3F3748] truncate">{item.description}</div>
                   </div>
-                  <span className="hidden sm:inline-flex px-2.5 py-1 rounded-[7px] bg-[#F5F0E8] border border-[#827786]/30 text-[10.5px] font-semibold text-[#554B5D] shrink-0">
+                  <span className="hidden sm:inline-flex px-2.5 py-1 rounded-[7px] bg-[#EDF8F2] border border-[#827786]/30 text-[10.5px] font-semibold text-[#554B5D] shrink-0">
                     {item.category}
                   </span>
                 </button>
