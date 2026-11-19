@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Video, FileText, Camera, Globe, Terminal, Film, Braces, X, CheckCircle2 } from 'lucide-react';
+import { Video, FileText, Camera, Globe, Terminal, Volume2, Pin, X, CheckCircle2 } from 'lucide-react';
 import { ResusLogo } from './ResusLogo';
 
 export interface CommandItem {
@@ -66,24 +66,24 @@ export const DEMO_COMMANDS: CommandItem[] = [
     icon: <Terminal className="w-4 h-4 text-[#292432]" />,
   },
   {
-    id: 'media',
-    command: 'convert video to mp4',
-    title: 'High-Speed Offline Video Converter',
-    description: 'Hardware-accelerated conversion, trimming & audio extraction via MediaFoundation',
-    category: 'Media Engine',
-    result: 'Converted meeting_recording.mov → meeting_recording.mp4',
-    detail: 'Codec: H.264/AAC · 60 FPS · Hardware acceleration enabled.',
-    icon: <Film className="w-4 h-4 text-[#292432]" />,
+    id: 'ripple',
+    command: 'click ripple on',
+    title: 'ASMR Click Sound & Ripple Feedback',
+    description: 'Real-time tactile mouse wave ripples & mechanical switch keystroke audio',
+    category: 'Live Feedback',
+    result: 'Desktop Ripple & ASMR Click Sounds active',
+    detail: 'Synthesizes mechanical switch clicks in real time with zero latency.',
+    icon: <Volume2 className="w-4 h-4 text-[#292432]" />,
   },
   {
-    id: 'json',
-    command: 'format json clipboard',
-    title: 'Format & Prettify Clipboard JSON',
-    description: 'Format minified payloads, parse JWT tokens, and generate UUIDs instantly',
-    category: 'Productivity',
-    result: 'Formatted 184 lines of JSON and copied back to clipboard',
-    detail: '0 syntax errors · 2-space indentation · Copied in 12ms.',
-    icon: <Braces className="w-4 h-4 text-[#292432]" />,
+    id: 'pin',
+    command: 'pin window on top',
+    title: 'Keep Active Window Always on Top',
+    description: 'Pin editors, video calls, or reference documents above all other apps',
+    category: 'Window Manager',
+    result: 'Pinned Visual Studio Code to Always On Top',
+    detail: 'Window frame locked topmost · Toggle anytime via Ctrl + Alt + Space.',
+    icon: <Pin className="w-4 h-4 text-[#292432]" />,
   },
 ];
 
@@ -95,14 +95,20 @@ export const InteractiveCommandBar: React.FC = () => {
   const [isUserActive, setIsUserActive] = useState(false);
   const [demoCycle, setDemoCycle] = useState(0);
 
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const idleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const currentDemoIndexRef = useRef(0);
 
-  // Filter commands based on current query
-  const filtered = useMemo(() => {
+  // Dynamic suggestions list: prominently show the active/matched command
+  const displayItems = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) {
+      if (!isUserActive) {
+        const activeItem = DEMO_COMMANDS[currentDemoIndexRef.current];
+        const others = DEMO_COMMANDS.filter((c) => c.id !== activeItem.id);
+        return [activeItem, ...others.slice(0, 3)];
+      }
       return DEMO_COMMANDS.slice(0, 4);
     }
     const matched = DEMO_COMMANDS.filter(
@@ -112,10 +118,10 @@ export const InteractiveCommandBar: React.FC = () => {
         c.category.toLowerCase().includes(q) ||
         c.description.toLowerCase().includes(q)
     );
-    return matched.length > 0 ? matched : DEMO_COMMANDS.slice(0, 4);
-  }, [query]);
+    return matched.length > 0 ? matched.slice(0, 4) : DEMO_COMMANDS.slice(0, 4);
+  }, [query, isUserActive, demoCycle]);
 
-  // Live typing animation effect across the 7 feature domains
+  // Live typing animation cycling through the 7 features
   useEffect(() => {
     if (isUserActive) return;
 
@@ -135,9 +141,9 @@ export const InteractiveCommandBar: React.FC = () => {
         charIndex++;
         setQuery(fullText.slice(0, charIndex));
         setSelectedIndex(0);
-        typingTimeoutRef.current = setTimeout(typeNextChar, 50 + Math.random() * 30);
+        typingTimeoutRef.current = setTimeout(typeNextChar, 50 + Math.random() * 25);
       } else {
-        // Finished typing the command. Brief pause, then simulate execution
+        // Finished typing. Pause briefly with cursor blinking at the end, then simulate Enter execution
         typingTimeoutRef.current = setTimeout(() => {
           if (isCancelled) return;
           setActiveResult(targetItem);
@@ -147,7 +153,7 @@ export const InteractiveCommandBar: React.FC = () => {
             if (isCancelled) return;
             setActiveResult(null);
 
-            // Backspace/delete animation
+            // Natural backspace deletion moving cursor back with the letters
             const deleteNextChar = () => {
               if (isCancelled) return;
               if (charIndex > 0) {
@@ -165,11 +171,11 @@ export const InteractiveCommandBar: React.FC = () => {
             };
             deleteNextChar();
           }, 3200);
-        }, 600);
+        }, 650);
       }
     };
 
-    typingTimeoutRef.current = setTimeout(typeNextChar, 400);
+    typingTimeoutRef.current = setTimeout(typeNextChar, 450);
 
     return () => {
       isCancelled = true;
@@ -177,7 +183,7 @@ export const InteractiveCommandBar: React.FC = () => {
     };
   }, [isUserActive, demoCycle]);
 
-  // Pause auto-typing when user interacts, resume after 8s of inactivity
+  // Pause live animation when user interacts, resume after 8s of inactivity
   const handleUserInteract = () => {
     setIsUserActive(true);
     if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
@@ -198,15 +204,15 @@ export const InteractiveCommandBar: React.FC = () => {
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     handleUserInteract();
-    if (e.key === 'ArrowDown' && filtered.length > 0) {
+    if (e.key === 'ArrowDown' && displayItems.length > 0) {
       e.preventDefault();
-      setSelectedIndex((prev) => (prev + 1) % filtered.length);
-    } else if (e.key === 'ArrowUp' && filtered.length > 0) {
+      setSelectedIndex((prev) => (prev + 1) % displayItems.length);
+    } else if (e.key === 'ArrowUp' && displayItems.length > 0) {
       e.preventDefault();
-      setSelectedIndex((prev) => (prev - 1 + filtered.length) % filtered.length);
-    } else if (e.key === 'Enter' && filtered.length > 0) {
+      setSelectedIndex((prev) => (prev - 1 + displayItems.length) % displayItems.length);
+    } else if (e.key === 'Enter' && displayItems.length > 0) {
       e.preventDefault();
-      handleRun(filtered[Math.min(selectedIndex, filtered.length - 1)]);
+      handleRun(displayItems[Math.min(selectedIndex, displayItems.length - 1)]);
     } else if (e.key === 'Escape') {
       setQuery('');
       setActiveResult(null);
@@ -215,33 +221,6 @@ export const InteractiveCommandBar: React.FC = () => {
 
   return (
     <div className="w-full max-w-[660px] mx-auto">
-      {/* 7 Feature Domain Chips */}
-      <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 mb-4">
-        <span className="text-[11px] font-semibold uppercase tracking-wider text-[#554B5D] mr-1 hidden sm:inline">
-          7 Domains:
-        </span>
-        {DEMO_COMMANDS.map((item, idx) => {
-          const isActive =
-            query.toLowerCase() === item.command.toLowerCase() ||
-            activeResult?.id === item.id ||
-            (!isUserActive && currentDemoIndexRef.current === idx);
-          return (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => handleRun(item)}
-              className={`text-[11px] font-mono font-medium px-2.5 py-1 rounded-full transition-all cursor-pointer shadow-xs ${
-                isActive
-                  ? 'bg-[#FF4500] text-white border border-[#FF4500] shadow-[0_0_12px_rgba(255,69,0,0.35)]'
-                  : 'bg-[#F5F0E8]/90 hover:bg-white text-[#292432] border border-[#292432]/12 hover:border-[#FF4500]'
-              }`}
-            >
-              {item.command}
-            </button>
-          );
-        })}
-      </div>
-
       {/* Main Resus Command Bar Replica */}
       <motion.div
         initial={{ opacity: 0, y: 16, scale: 0.98 }}
@@ -283,25 +262,48 @@ export const InteractiveCommandBar: React.FC = () => {
             </button>
           </div>
 
-          {/* Live Typing Input with Caret */}
-          <div className="flex-1 flex items-center min-w-0 relative">
-            <input
-              type="text"
-              value={query}
-              onFocus={handleUserInteract}
-              onChange={(e) => {
-                handleUserInteract();
-                setQuery(e.target.value);
-                setSelectedIndex(0);
-                setActiveResult(null);
-              }}
-              onKeyDown={handleKeyDown}
-              placeholder="Make something happen..."
-              aria-label="Interactive Resus command bar preview"
-              className="w-full bg-transparent text-[#292432] placeholder-[#554B5D] text-[16.5px] font-medium focus:outline-none"
-            />
-            {!isUserActive && query.length > 0 && (
-              <span className="w-[2px] h-[19px] bg-[#FF4500] inline-block animate-pulse shrink-0 -ml-2 mr-1 rounded-full pointer-events-none" />
+          {/* Live Typing Input with Caret moving strictly with the letters */}
+          <div
+            className="flex-1 flex items-center min-w-0 h-full cursor-text"
+            onClick={() => {
+              handleUserInteract();
+              inputRef.current?.focus();
+            }}
+          >
+            {isUserActive ? (
+              <input
+                ref={inputRef}
+                type="text"
+                value={query}
+                autoFocus
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setSelectedIndex(0);
+                  setActiveResult(null);
+                }}
+                onKeyDown={handleKeyDown}
+                placeholder="Make something happen..."
+                aria-label="Interactive Resus command bar"
+                className="w-full bg-transparent text-[#292432] placeholder-[#554B5D] text-[16.5px] font-medium focus:outline-none"
+              />
+            ) : (
+              <div className="flex items-center min-w-0 select-none">
+                {query.length === 0 ? (
+                  <div className="flex items-center">
+                    <span className="text-[#554B5D] text-[16.5px] font-medium">
+                      Make something happen...
+                    </span>
+                    <span className="inline-block w-[2px] h-[19px] bg-[#FF4500] animate-pulse ml-1 rounded-full shrink-0" />
+                  </div>
+                ) : (
+                  <div className="flex items-center">
+                    <span className="text-[#292432] text-[16.5px] font-medium tracking-tight whitespace-pre">
+                      {query}
+                    </span>
+                    <span className="inline-block w-[2px] h-[19px] bg-[#FF4500] animate-pulse ml-[1.5px] rounded-full shrink-0" />
+                  </div>
+                )}
+              </div>
             )}
           </div>
 
@@ -350,7 +352,7 @@ export const InteractiveCommandBar: React.FC = () => {
           </div>
 
           <div className="space-y-1">
-            {filtered.map((item, idx) => {
+            {displayItems.map((item, idx) => {
               const isSelected =
                 idx === selectedIndex ||
                 item.command.toLowerCase().startsWith(query.toLowerCase().trim()) ||
@@ -383,12 +385,6 @@ export const InteractiveCommandBar: React.FC = () => {
                 </button>
               );
             })}
-            {filtered.length === 0 && (
-              <div className="px-3 py-4 text-center text-xs text-[#554B5D]">
-                No matching demo command. Try <span className="font-mono font-semibold text-[#292432]">screen record</span> or{' '}
-                <span className="font-mono font-semibold text-[#292432]">pdf</span>.
-              </div>
-            )}
           </div>
         </div>
       </motion.div>
