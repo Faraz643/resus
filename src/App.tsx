@@ -226,7 +226,7 @@ export function App() {
             Your desktop.
             <br />
             <span className="bg-gradient-to-r from-[#292432] via-[#624B8A] to-[#9B4D6A] bg-clip-text text-transparent">
-              On another level.
+              On another ⅃ǝvǝL.
             </span>
           </motion.h1>
 
