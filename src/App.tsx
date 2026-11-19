@@ -26,6 +26,7 @@ import { PricingSection } from './components/PricingSection';
 import { LegalModal, type LegalDocType } from './components/LegalModal';
 import { useLatestRelease } from './hooks/useLatestRelease';
 import { SITE_CONFIG } from './config/siteConfig';
+import { playResusAsmrClick } from './utils/asmrSound';
 
 const FEATURE_CARDS = [
   {
@@ -93,43 +94,6 @@ export function App() {
   const [isStudioAsmrActive, setIsStudioAsmrActive] = useState(false);
   const [studioRipples, setStudioRipples] = useState<{ id: number; x: number; y: number }[]>([]);
 
-  // Synthesize crisp mechanical switch click sound via Web Audio API
-  const playMechanicalClick = () => {
-    try {
-      const AudioCtx =
-        window.AudioContext ||
-        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-      if (!AudioCtx) return;
-      const ctx = new AudioCtx();
-
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(1600, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(120, ctx.currentTime + 0.04);
-      gain.gain.setValueAtTime(0.2, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start();
-      osc.stop(ctx.currentTime + 0.045);
-
-      const osc2 = ctx.createOscillator();
-      const gain2 = ctx.createGain();
-      osc2.type = 'sine';
-      osc2.frequency.setValueAtTime(240, ctx.currentTime);
-      osc2.frequency.exponentialRampToValueAtTime(50, ctx.currentTime + 0.035);
-      gain2.gain.setValueAtTime(0.12, ctx.currentTime);
-      gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.035);
-      osc2.connect(gain2);
-      gain2.connect(ctx.destination);
-      osc2.start();
-      osc2.stop(ctx.currentTime + 0.04);
-    } catch {
-      // fallback
-    }
-  };
-
   const spawnStudioRipple = (clientX: number, clientY: number) => {
     const id = Date.now() + Math.random();
     setStudioRipples((prev) => [...prev.slice(-6), { id, x: clientX, y: clientY }]);
@@ -144,7 +108,7 @@ export function App() {
 
     const handleGlobalClick = (e: MouseEvent) => {
       if (isStudioAsmrActive) {
-        playMechanicalClick();
+        playResusAsmrClick();
       }
       if (isStudioRippleActive) {
         spawnStudioRipple(e.clientX, e.clientY);
@@ -426,7 +390,7 @@ export function App() {
                       setIsStudioRippleActive(next);
                       if (next) {
                         spawnStudioRipple(e.clientX, e.clientY);
-                        if (isStudioAsmrActive) playMechanicalClick();
+                        if (isStudioAsmrActive) playResusAsmrClick();
                       }
                     }}
                     className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
@@ -464,7 +428,7 @@ export function App() {
                       const next = !isStudioAsmrActive;
                       setIsStudioAsmrActive(next);
                       if (next) {
-                        playMechanicalClick();
+                        playResusAsmrClick();
                         if (isStudioRippleActive) spawnStudioRipple(e.clientX, e.clientY);
                       }
                     }}
