@@ -67,9 +67,9 @@ const FEATURE_CARDS = [
 ];
 
 const SHORTCUTS = [
-  { keys: ['Alt', 'Space'], label: 'Summon Resus Command Bar from anywhere' },
+  { keys: ['Ctrl', 'Alt', 'Space'], label: 'Summon Resus Command Bar from anywhere' },
   { keys: ['Ctrl', 'G / S / M / F / I'], label: 'Switch live Screen Studio zoom presets on the fly' },
-  { keys: ['S'], label: 'Instant full-screen capture in Screenshot Mode' },
+  { keys: ['S'], label: 'Burst screenshot capture in Screenshot Mode' },
   { keys: ['R'], label: 'Drag custom region capture in Screenshot Mode' },
 ];
 
@@ -89,6 +89,73 @@ export function App() {
   const [copiedSuccessKey, setCopiedSuccessKey] = useState(false);
   const [activeZoom, setActiveZoom] = useState('Focused');
   const [elapsedSec, setElapsedSec] = useState(42);
+  const [isStudioRippleActive, setIsStudioRippleActive] = useState(false);
+  const [isStudioAsmrActive, setIsStudioAsmrActive] = useState(false);
+  const [studioRipples, setStudioRipples] = useState<{ id: number; x: number; y: number }[]>([]);
+
+  // Synthesize crisp mechanical switch click sound via Web Audio API
+  const playMechanicalClick = () => {
+    try {
+      const AudioCtx =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(1600, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(120, ctx.currentTime + 0.04);
+      gain.gain.setValueAtTime(0.2, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.045);
+
+      const osc2 = ctx.createOscillator();
+      const gain2 = ctx.createGain();
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(240, ctx.currentTime);
+      osc2.frequency.exponentialRampToValueAtTime(50, ctx.currentTime + 0.035);
+      gain2.gain.setValueAtTime(0.12, ctx.currentTime);
+      gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.035);
+      osc2.connect(gain2);
+      gain2.connect(ctx.destination);
+      osc2.start();
+      osc2.stop(ctx.currentTime + 0.04);
+    } catch {
+      // fallback
+    }
+  };
+
+  const spawnStudioRipple = (clientX: number, clientY: number) => {
+    const id = Date.now() + Math.random();
+    setStudioRipples((prev) => [...prev.slice(-6), { id, x: clientX, y: clientY }]);
+    setTimeout(() => {
+      setStudioRipples((prev) => prev.filter((r) => r.id !== id));
+    }, 900);
+  };
+
+  // Global click feedback when Screen Studio ripple or ASMR is active
+  useEffect(() => {
+    if (!isStudioRippleActive && !isStudioAsmrActive) return;
+
+    const handleGlobalClick = (e: MouseEvent) => {
+      if (isStudioAsmrActive) {
+        playMechanicalClick();
+      }
+      if (isStudioRippleActive) {
+        spawnStudioRipple(e.clientX, e.clientY);
+      }
+    };
+
+    window.addEventListener('click', handleGlobalClick);
+    return () => {
+      window.removeEventListener('click', handleGlobalClick);
+    };
+  }, [isStudioRippleActive, isStudioAsmrActive]);
 
   useEffect(() => {
     try {
@@ -350,16 +417,84 @@ export function App() {
                     <div className="text-xs font-bold text-[#292432]">5 Zoom Presets</div>
                     <div className="text-[11px] text-[#554B5D] mt-0.5">Gentle to Intense</div>
                   </div>
-                  <div className="p-3.5 rounded-2xl bg-white/70 border border-[#292432]/10">
-                    <MousePointerClick className="w-4 h-4 text-[#292432] mb-2" />
+                  <motion.button
+                    type="button"
+                    whileTap={{ scale: 0.96 }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const next = !isStudioRippleActive;
+                      setIsStudioRippleActive(next);
+                      if (next) {
+                        spawnStudioRipple(e.clientX, e.clientY);
+                        if (isStudioAsmrActive) playMechanicalClick();
+                      }
+                    }}
+                    className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                      isStudioRippleActive
+                        ? 'bg-[#FFF0EB] border-2 border-[#FF5722] shadow-[0_0_18px_rgba(255,87,34,0.3)] ring-2 ring-[#FF5722]/20'
+                        : 'bg-white/70 hover:bg-white border-[#292432]/10 hover:border-[#FF5722]/40'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <MousePointerClick
+                        className={`w-4 h-4 ${
+                          isStudioRippleActive ? 'text-[#FF5722]' : 'text-[#292432]'
+                        }`}
+                      />
+                      <span
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                          isStudioRippleActive
+                            ? 'bg-[#FF5722] text-white'
+                            : 'bg-[#F5F0E8] text-[#554B5D]'
+                        }`}
+                      >
+                        {isStudioRippleActive ? 'Active' : 'Try'}
+                      </span>
+                    </div>
                     <div className="text-xs font-bold text-[#292432]">Click Ripples</div>
-                    <div className="text-[11px] text-[#554B5D] mt-0.5">Lavender, Rose &amp; Sky</div>
-                  </div>
-                  <div className="p-3.5 rounded-2xl bg-white/70 border border-[#292432]/10">
-                    <Volume2 className="w-4 h-4 text-[#292432] mb-2" />
+                    <div className="text-[11px] text-[#554B5D] mt-0.5">
+                      {isStudioRippleActive ? 'Ripples active on click' : 'Lavender, Rose & Sky'}
+                    </div>
+                  </motion.button>
+                  <motion.button
+                    type="button"
+                    whileTap={{ scale: 0.96 }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const next = !isStudioAsmrActive;
+                      setIsStudioAsmrActive(next);
+                      if (next) {
+                        playMechanicalClick();
+                        if (isStudioRippleActive) spawnStudioRipple(e.clientX, e.clientY);
+                      }
+                    }}
+                    className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                      isStudioAsmrActive
+                        ? 'bg-[#FFF0EB] border-2 border-[#FF5722] shadow-[0_0_18px_rgba(255,87,34,0.3)] ring-2 ring-[#FF5722]/20'
+                        : 'bg-white/70 hover:bg-white border-[#292432]/10 hover:border-[#FF5722]/40'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <Volume2
+                        className={`w-4 h-4 ${
+                          isStudioAsmrActive ? 'text-[#FF5722]' : 'text-[#292432]'
+                        }`}
+                      />
+                      <span
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                          isStudioAsmrActive
+                            ? 'bg-[#FF5722] text-white'
+                            : 'bg-[#F5F0E8] text-[#554B5D]'
+                        }`}
+                      >
+                        {isStudioAsmrActive ? 'Active' : 'Try'}
+                      </span>
+                    </div>
                     <div className="text-xs font-bold text-[#292432]">ASMR Clicks</div>
-                    <div className="text-[11px] text-[#554B5D] mt-0.5">Real-time tactile audio</div>
-                  </div>
+                    <div className="text-[11px] text-[#554B5D] mt-0.5">
+                      {isStudioAsmrActive ? 'Audio active on click' : 'Real-time tactile audio'}
+                    </div>
+                  </motion.button>
                 </div>
               </div>
 
@@ -768,7 +903,7 @@ export function App() {
                 </h4>
                 <ol className="text-xs text-[#554B5D] space-y-2 list-decimal list-inside leading-relaxed">
                   <li>
-                    Press <kbd className="px-1.5 py-0.5 rounded bg-white border border-[#292432]/20 text-[11px] font-mono text-[#292432]">Alt + Space</kbd> to open Resus
+                    Press <kbd className="px-1.5 py-0.5 rounded bg-white border border-[#292432]/20 text-[11px] font-mono text-[#292432]">Ctrl + Alt + Space</kbd> to open Resus
                   </li>
                   <li>
                     Click the tray icon or command bar menu → <strong className="text-[#292432]">License & Trial...</strong>
@@ -805,6 +940,18 @@ export function App() {
         onClose={() => setActiveLegalDoc(null)}
         onSwitchDoc={setActiveLegalDoc}
       />
+
+      {/* Studio Live Click Ripples Overlay */}
+      {studioRipples.map((r) => (
+        <motion.span
+          key={r.id}
+          initial={{ scale: 0.15, opacity: 0.95 }}
+          animate={{ scale: 3.2, opacity: 0 }}
+          transition={{ duration: 0.75, ease: 'easeOut' }}
+          className="fixed pointer-events-none -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full border-2 border-[#FF5722] bg-[#FF5722]/20 z-50"
+          style={{ left: r.x, top: r.y }}
+        />
+      ))}
     </div>
   );
 }

@@ -20,10 +20,10 @@ const WORKFLOW_TABS: WorkflowTab[] = [
     icon: <Code2 className="w-4 h-4" />,
     headline: 'Ship faster without leaving your editor',
     summary:
-      'Format JSON payloads, generate UUIDs and SHA-256 hashes, encode Base64, launch repo workspaces, and record crisp bug/PR walkthroughs with Developer Auto-Zoom.',
+      'Kill hung dev ports, generate UUIDs and SHA-256 hashes, encode Base64, launch repo workspaces, and record 60 FPS bug walkthroughs with Developer Auto-Zoom.',
     commands: [
       { cmd: 'screen record', outcome: '60 FPS demo with Ctrl+G/S/M/F/I live zoom & keystroke HUD' },
-      { cmd: 'format json', outcome: 'Validates & prettifies clipboard JSON in 10ms' },
+      { cmd: 'kill port 3000', outcome: 'Instantly terminates hung Node, Docker, or dev servers' },
       { cmd: 'open dev', outcome: 'Launches GitHub, localhost, Linear & docs in one shot' },
       { cmd: 'uuid / sha256', outcome: 'Generates & copies instant dev tokens to clipboard' },
     ],
@@ -52,12 +52,12 @@ const WORKFLOW_TABS: WorkflowTab[] = [
     icon: <Layers className="w-4 h-4" />,
     headline: 'Convert, merge, and organize assets in seconds',
     summary:
-      'Turn PNGs to WebP, merge client PDF decks, extract pages, add watermarks, or polish release notes and emails without touching a single web tool.',
+      'Turn PNGs to WebP, merge client PDF decks, OCR design mockups, and compress heavy presentations locally with zero cloud uploads.',
     commands: [
       { cmd: 'convert png to webp', outcome: 'Batch-converts images locally with crisp quality' },
       { cmd: 'merge pdfs', outcome: 'Combines proposals & specs into one clean PDF' },
       { cmd: 'compress pdf', outcome: 'Reduces heavy decks without uploading confidential files' },
-      { cmd: 'rewrite concise', outcome: 'Polishes copy from clipboard or active selection' },
+      { cmd: 'ocr screen text', outcome: 'Extracts non-selectable text & copy directly from Figma or mockups' },
     ],
     highlightMetric: '100%',
     highlightLabel: 'Offline PDF & media processing — zero cloud uploads',
@@ -73,7 +73,7 @@ const WORKFLOW_TABS: WorkflowTab[] = [
       { cmd: 'open study', outcome: 'Opens your custom multi-tab focus preset instantly' },
       { cmd: 'ocr pdf', outcome: 'Extracts searchable text from scanned documents locally' },
       { cmd: 'word count', outcome: 'Instant character, word & reading-time stats from clipboard' },
-      { cmd: 'check updates', outcome: 'Silent background self-updates via GitHub Releases' },
+      { cmd: 'what is my ip', outcome: 'Instantly displays active local network interfaces & IP addresses' },
     ],
     highlightMetric: '16+',
     highlightLabel: 'Built-in offline PDF, media & productivity tools',
