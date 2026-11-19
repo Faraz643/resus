@@ -124,10 +124,14 @@ export function App() {
 
       {/* Ambient Floating Aurora Blobs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute -top-32 -left-24 w-[480px] h-[480px] rounded-full bg-[#B9A2E8]/25 blur-[110px] animate-aurora-blob" />
+        <div className="absolute -top-32 -left-24 w-[480px] h-[480px] rounded-full bg-[#7BC8A4]/30 blur-[110px] animate-aurora-blob" />
         <div
           className="absolute top-20 -right-24 w-[420px] h-[420px] rounded-full bg-[#D9A0B0]/25 blur-[110px] animate-aurora-blob"
           style={{ animationDelay: '3s' }}
+        />
+        <div
+          className="absolute top-1/2 left-1/4 w-[450px] h-[450px] rounded-full bg-[#B9A2E8]/25 blur-[120px] animate-aurora-blob"
+          style={{ animationDelay: '5s' }}
         />
       </div>
 
