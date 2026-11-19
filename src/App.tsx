@@ -532,7 +532,10 @@ export function App() {
               Use Cases
             </span>
             <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#292432] mt-2">
-              Built for how you actually work
+              Built for how you actually work{' '}
+              <span className="text-base sm:text-lg font-normal text-[#827786] tracking-normal font-sans align-middle inline-block ml-1">
+                (but not limited to)
+              </span>
             </h2>
             <p className="text-[15px] text-[#554B5D] mt-3">
               See how developers, creators, and teams use Resus every day to save hours of context
