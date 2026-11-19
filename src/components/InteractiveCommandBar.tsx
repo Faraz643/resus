@@ -126,7 +126,7 @@ export const InteractiveCommandBar: React.FC = () => {
             key={item.id}
             type="button"
             onClick={() => handleRun(item)}
-            className="text-xs font-mono font-medium px-3 py-1 rounded-full bg-[#EDF8F2]/90 hover:bg-white text-[#292432] border border-[#292432]/12 hover:border-[#7BC8A4] transition-all cursor-pointer shadow-xs"
+            className="text-xs font-mono font-medium px-3 py-1 rounded-full bg-[#F5F0E8]/90 hover:bg-white text-[#292432] border border-[#292432]/12 hover:border-[#FF4500] transition-all cursor-pointer shadow-xs"
           >
             {item.command}
           </button>
@@ -151,7 +151,7 @@ export const InteractiveCommandBar: React.FC = () => {
                 setActiveResult(null);
               }}
               title="Clear"
-              className="w-[28px] h-[28px] rounded-full bg-[#EDF8F2]/90 border border-[#827786]/30 hover:bg-white hover:border-[#7BC8A4] flex items-center justify-center transition-colors cursor-pointer"
+              className="w-[28px] h-[28px] rounded-full bg-[#F5F0E8]/90 border border-[#827786]/30 hover:bg-white hover:border-[#FF4500] flex items-center justify-center transition-colors cursor-pointer"
             >
               <X className="w-3.5 h-3.5 text-[#292432]" />
             </button>
@@ -162,8 +162,8 @@ export const InteractiveCommandBar: React.FC = () => {
               title="Toggle Browser Mode"
               className={`w-[30px] h-[30px] rounded-full border flex items-center justify-center transition-all cursor-pointer ${
                 browserMode
-                  ? 'bg-[#E5F5ED] border-[#7BC8A4] text-[#1E6B48] shadow-[0_0_12px_rgba(123,200,164,0.55)]'
-                  : 'bg-[#EDF8F2]/90 border-[#827786]/30 hover:bg-white hover:border-[#7BC8A4] text-[#292432]'
+                  ? 'bg-[#FFF0EB] border-[#FF4500] text-[#FF4500] shadow-[0_0_12px_rgba(255,69,0,0.45)]'
+                  : 'bg-[#F5F0E8]/90 border-[#827786]/30 hover:bg-white hover:border-[#FF4500] text-[#292432]'
               }`}
             >
               <Globe className="w-4 h-4" />
@@ -187,7 +187,7 @@ export const InteractiveCommandBar: React.FC = () => {
 
           {/* Right Controls: Context Badge + Logo Squircle Tile */}
           <div className="flex items-center gap-2.5 shrink-0">
-            <span className="hidden sm:inline-flex items-center px-2.5 py-1 rounded-[11px] bg-[#EDF8F2]/90 border border-[#827786]/30 text-[11px] font-semibold text-[#292432]">
+            <span className="hidden sm:inline-flex items-center px-2.5 py-1 rounded-[11px] bg-[#F5F0E8]/90 border border-[#827786]/30 text-[11px] font-semibold text-[#292432]">
               In Desktop
             </span>
 
@@ -243,18 +243,18 @@ export const InteractiveCommandBar: React.FC = () => {
                   onMouseEnter={() => setSelectedIndex(idx)}
                   className={`w-full flex items-center gap-3 px-2.5 py-2 rounded-[11px] border text-left transition-all cursor-pointer ${
                     isSelected
-                      ? 'bg-[#E5F5ED]/95 border-[#7BC8A4]'
-                      : 'bg-transparent border-transparent hover:bg-[#EDF8F2]/85 hover:border-[#7BC8A4]/40'
+                      ? 'bg-[#FFF0EB]/95 border-[#FF4500]'
+                      : 'bg-transparent border-transparent hover:bg-[#F5F0E8]/85 hover:border-[#FF4500]/40'
                   }`}
                 >
-                  <div className="w-8 h-8 rounded-[9px] bg-[#EDF8F2] border border-[#827786]/30 flex items-center justify-center shrink-0">
+                  <div className="w-8 h-8 rounded-[9px] bg-[#F5F0E8] border border-[#827786]/30 flex items-center justify-center shrink-0">
                     {item.icon}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-[13px] font-semibold text-[#292432] truncate">{item.title}</div>
                     <div className="text-[11.5px] text-[#3F3748] truncate">{item.description}</div>
                   </div>
-                  <span className="hidden sm:inline-flex px-2.5 py-1 rounded-[7px] bg-[#EDF8F2] border border-[#827786]/30 text-[10.5px] font-semibold text-[#554B5D] shrink-0">
+                  <span className="hidden sm:inline-flex px-2.5 py-1 rounded-[7px] bg-[#F5F0E8] border border-[#827786]/30 text-[10.5px] font-semibold text-[#554B5D] shrink-0">
                     {item.category}
                   </span>
                 </button>

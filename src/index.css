@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --mint: #7BC8A4;
-  --mint-soft: #EDF8F2;
-  --alabaster: #EDF8F2;
-  --alabaster-soft: #F6FCF9;
+  --reddit: #FF4500;
+  --reddit-soft: #FFF0EB;
+  --alabaster: #F5F0E8;
+  --alabaster-soft: #FAF7F2;
   --lavender: #B9A2E8;
   --lavender-soft: #E8DEF6;
   --rose: #D9A0B0;
@@ -56,12 +56,12 @@
 }
 
 .aurora-canvas {
-  background-color: #EDF8F2;
+  background-color: #F5F0E8;
   background-image:
-    radial-gradient(ellipse 65% 55% at 18% 15%, rgba(123, 200, 164, 0.45), transparent 62%),
-    radial-gradient(ellipse 60% 50% at 85% 20%, rgba(217, 160, 176, 0.40), transparent 60%),
-    radial-gradient(ellipse 70% 55% at 50% 60%, rgba(185, 162, 232, 0.35), transparent 65%),
-    linear-gradient(135deg, #EDF8F2 0%, rgba(123, 200, 164, 0.20) 25%, #E8DEF6 60%, #F0E0E8 85%, #EDF8F2 100%);
+    radial-gradient(ellipse 65% 55% at 18% 15%, rgba(255, 69, 0, 0.38), transparent 62%),
+    radial-gradient(ellipse 60% 50% at 85% 20%, rgba(217, 160, 176, 0.45), transparent 60%),
+    radial-gradient(ellipse 70% 55% at 50% 60%, rgba(185, 162, 232, 0.40), transparent 65%),
+    linear-gradient(135deg, #F5F0E8 0%, rgba(255, 69, 0, 0.16) 24%, #E8DEF6 55%, #F0E0E8 80%, #F5F0E8 100%);
   background-size: 185% 185%;
   animation: auroraFlow 7.5s ease-in-out infinite;
 }
@@ -93,10 +93,10 @@
 
 .aurora-card:hover {
   background: rgba(255, 255, 255, 0.74);
-  border-color: rgba(123, 200, 164, 0.65);
+  border-color: rgba(255, 69, 0, 0.55);
   box-shadow:
     0 12px 32px -6px rgba(41, 36, 50, 0.10),
-    0 0 0 1px rgba(123, 200, 164, 0.22),
+    0 0 0 1px rgba(255, 69, 0, 0.20),
     inset 0 1px 0 rgba(255, 255, 255, 0.85);
 }
 
@@ -161,5 +161,5 @@
 }
 
 .resus-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 35, 70, 0.65);
+  background: rgba(255, 69, 0, 0.65);
 }
