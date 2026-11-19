@@ -21,38 +21,38 @@ export const DEMO_COMMANDS: CommandItem[] = [
     title: 'Start Screen Studio Recording',
     description: 'Record 60 FPS demo with smooth auto-zoom, click ripples & keystroke HUD',
     category: 'Screen Studio',
-    result: 'Screen Studio ready — 60 FPS Developer Auto-Zoom & ASMR Clicks enabled',
+    result: 'Screen Studio active — 60 FPS Developer Auto-Zoom & Click HUD enabled',
     detail: 'Preset: Developer · Zoom keys: Ctrl + G / S / M / F / I active.',
     icon: <Video className="w-4 h-4 text-[#292432]" />,
   },
   {
     id: 'pdf',
     command: 'compress pdf contract.pdf',
-    title: 'Offline PDF Suite — Extreme Compression',
-    description: 'Shrink PDFs by up to 85% locally with zero cloud uploads or data leaks',
+    title: 'Offline PDF Suite — Merge & Compress',
+    description: 'Combine, split, OCR, watermark, or compress PDFs locally with zero uploads',
     category: 'PDF Suite',
     result: 'Compressed contract.pdf: 14.8 MB → 2.1 MB (86% reduction)',
-    detail: 'Processed 100% offline in 0.42s using local PDF engine.',
+    detail: 'Processed 100% offline in 0.42s with zero cloud uploads or data leaks.',
     icon: <FileText className="w-4 h-4 text-[#292432]" />,
   },
   {
-    id: 'ocr',
-    command: 'ocr screen to clipboard',
-    title: 'Optical Character Recognition (OCR)',
-    description: 'Extract non-selectable text, code snippets & tables directly from screen',
-    category: 'OCR & Vision',
-    result: 'Extracted 34 lines of code from screen → Copied to clipboard',
-    detail: 'Recognized English text with 99.8% precision in 0.18s.',
+    id: 'capture',
+    command: 'rapid capture',
+    title: 'Rapid Capture Screenshot Mode',
+    description: 'Back-to-back full screen [S] or region [R] captures with instant clipboard copy',
+    category: 'Rapid Capture',
+    result: 'Rapid Capture active — Full screen & Region snipping ready',
+    detail: 'Keys: [S] Full screen · [R] Region · Auto-copied directly to clipboard.',
     icon: <Camera className="w-4 h-4 text-[#292432]" />,
   },
   {
     id: 'browser',
     command: 'open dev workspace',
     title: 'Launch Workspace Tab Preset',
-    description: 'Open GitHub, Linear, Figma, and Docs simultaneously in your browser',
+    description: 'Open GitHub, Linear, Figma, and Docs together in Chrome or Edge',
     category: 'Browser Control',
     result: 'Launched Dev Preset (4 tabs) in Google Chrome',
-    detail: 'github.com · linear.app · figma.com · localhost:3000',
+    detail: 'github.com · linear.app · figma.com · docs.google.com',
     icon: <Globe className="w-4 h-4 text-[#292432]" />,
   },
   {
@@ -100,14 +100,16 @@ export const InteractiveCommandBar: React.FC = () => {
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const currentDemoIndexRef = useRef(0);
 
-  // Dynamic suggestions list: prominently show the active/matched command
+  // Suggestions list: stable 4 items windowing with active item selected
   const displayItems = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) {
       if (!isUserActive) {
-        const activeItem = DEMO_COMMANDS[currentDemoIndexRef.current];
-        const others = DEMO_COMMANDS.filter((c) => c.id !== activeItem.id);
-        return [activeItem, ...others.slice(0, 3)];
+        const curIdx = currentDemoIndexRef.current;
+        if (curIdx < 4) {
+          return DEMO_COMMANDS.slice(0, 4);
+        }
+        return DEMO_COMMANDS.slice(curIdx - 3, curIdx + 1);
       }
       return DEMO_COMMANDS.slice(0, 4);
     }
@@ -120,6 +122,15 @@ export const InteractiveCommandBar: React.FC = () => {
     );
     return matched.length > 0 ? matched.slice(0, 4) : DEMO_COMMANDS.slice(0, 4);
   }, [query, isUserActive, demoCycle]);
+
+  // Determine currently active item
+  const currentActiveItem = useMemo(() => {
+    if (!isUserActive) {
+      return DEMO_COMMANDS[currentDemoIndexRef.current];
+    }
+    if (activeResult) return activeResult;
+    return displayItems[Math.min(selectedIndex, displayItems.length - 1)];
+  }, [isUserActive, activeResult, selectedIndex, displayItems, demoCycle]);
 
   // Live typing animation cycling through the 7 features
   useEffect(() => {
@@ -140,7 +151,6 @@ export const InteractiveCommandBar: React.FC = () => {
       if (charIndex < fullText.length) {
         charIndex++;
         setQuery(fullText.slice(0, charIndex));
-        setSelectedIndex(0);
         typingTimeoutRef.current = setTimeout(typeNextChar, 50 + Math.random() * 25);
       } else {
         // Finished typing. Pause briefly with cursor blinking at the end, then simulate Enter execution
@@ -148,7 +158,7 @@ export const InteractiveCommandBar: React.FC = () => {
           if (isCancelled) return;
           setActiveResult(targetItem);
 
-          // Display the live result drawer for 3.2 seconds
+          // Display the live result drawer for 3.0 seconds
           typingTimeoutRef.current = setTimeout(() => {
             if (isCancelled) return;
             setActiveResult(null);
@@ -170,7 +180,7 @@ export const InteractiveCommandBar: React.FC = () => {
               }
             };
             deleteNextChar();
-          }, 3200);
+          }, 3000);
         }, 650);
       }
     };
@@ -220,18 +230,18 @@ export const InteractiveCommandBar: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-[660px] mx-auto">
-      {/* Main Resus Command Bar Replica */}
+    <div className="w-full max-w-[640px] mx-auto">
+      {/* Main Resus Command Palette Card Replica */}
       <motion.div
         initial={{ opacity: 0, y: 16, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-        className="resus-pill rounded-[28px] overflow-hidden text-left"
+        className="rounded-[24px] bg-[#FAF7F2]/95 backdrop-blur-xl border border-[#292432]/10 shadow-[0_20px_50px_rgba(41,36,50,0.12),0_1px_0_rgba(255,255,255,0.8)_inset] overflow-hidden text-left"
       >
         {/* Top Input Capsule Row */}
         <div className="h-[58px] px-4 sm:px-5 flex items-center gap-3">
           {/* Left Controls: Clear (X) Button + Minimal Globe Browser Toggle */}
-          <div className="flex items-center gap-1.5 shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             <button
               type="button"
               onClick={() => {
@@ -240,7 +250,7 @@ export const InteractiveCommandBar: React.FC = () => {
                 setActiveResult(null);
               }}
               title="Clear"
-              className="w-[28px] h-[28px] rounded-full bg-[#F5F0E8]/90 border border-[#827786]/30 hover:bg-white hover:border-[#FF4500] flex items-center justify-center transition-colors cursor-pointer"
+              className="w-[30px] h-[30px] rounded-full bg-white/70 border border-[#827786]/20 hover:bg-white hover:border-[#FF5722] flex items-center justify-center transition-colors cursor-pointer"
             >
               <X className="w-3.5 h-3.5 text-[#292432]" />
             </button>
@@ -254,11 +264,11 @@ export const InteractiveCommandBar: React.FC = () => {
               title="Toggle Browser Mode"
               className={`w-[30px] h-[30px] rounded-full border flex items-center justify-center transition-all cursor-pointer ${
                 browserMode
-                  ? 'bg-[#FFF0EB] border-[#FF4500] text-[#FF4500] shadow-[0_0_12px_rgba(255,69,0,0.45)]'
-                  : 'bg-[#F5F0E8]/90 border-[#827786]/30 hover:bg-white hover:border-[#FF4500] text-[#292432]'
+                  ? 'bg-[#FFF0EB] border-[#FF5722] text-[#FF5722] shadow-[0_0_10px_rgba(255,87,34,0.3)]'
+                  : 'bg-white/70 border-[#827786]/20 hover:bg-white hover:border-[#FF5722] text-[#292432]'
               }`}
             >
-              <Globe className="w-4 h-4" />
+              <Globe className="w-3.5 h-3.5" />
             </button>
           </div>
 
@@ -284,23 +294,20 @@ export const InteractiveCommandBar: React.FC = () => {
                 onKeyDown={handleKeyDown}
                 placeholder="Make something happen..."
                 aria-label="Interactive Resus command bar"
-                className="w-full bg-transparent text-[#292432] placeholder-[#554B5D] text-[16.5px] font-medium focus:outline-none"
+                className="w-full bg-transparent text-[#292432] placeholder-[#554B5D]/75 text-[16px] font-medium focus:outline-none"
               />
             ) : (
               <div className="flex items-center min-w-0 select-none">
                 {query.length === 0 ? (
-                  <div className="flex items-center">
-                    <span className="text-[#554B5D] text-[16.5px] font-medium">
-                      Make something happen...
-                    </span>
-                    <span className="inline-block w-[2px] h-[19px] bg-[#FF4500] animate-pulse ml-1 rounded-full shrink-0" />
-                  </div>
+                  <span className="text-[#554B5D]/75 text-[16px] font-normal">
+                    Make something happen...
+                  </span>
                 ) : (
                   <div className="flex items-center">
-                    <span className="text-[#292432] text-[16.5px] font-medium tracking-tight whitespace-pre">
+                    <span className="text-[#292432] text-[16px] font-medium tracking-tight whitespace-pre">
                       {query}
                     </span>
-                    <span className="inline-block w-[2px] h-[19px] bg-[#FF4500] animate-pulse ml-[1.5px] rounded-full shrink-0" />
+                    <span className="inline-block w-[2px] h-[19px] bg-[#FF5722] animate-pulse ml-[1px] rounded-full shrink-0" />
                   </div>
                 )}
               </div>
@@ -309,11 +316,11 @@ export const InteractiveCommandBar: React.FC = () => {
 
           {/* Right Controls: In Desktop Context Badge + Logo Squircle Tile */}
           <div className="flex items-center gap-2.5 shrink-0">
-            <span className="hidden sm:inline-flex items-center px-2.5 py-1 rounded-[11px] bg-[#F5F0E8]/90 border border-[#827786]/30 text-[11px] font-semibold text-[#292432]">
+            <span className="hidden sm:inline-flex items-center px-3 py-1 rounded-[10px] bg-white/60 border border-[#827786]/20 text-[11.5px] font-semibold text-[#3F3748]">
               In Desktop
             </span>
 
-            <div className="w-9 h-9 rounded-[9px] bg-white border border-[#292432]/10 shadow-sm flex items-center justify-center shrink-0 p-1">
+            <div className="w-[34px] h-[34px] rounded-[10px] bg-white border border-[#292432]/10 shadow-[0_1px_3px_rgba(0,0,0,0.06)] flex items-center justify-center shrink-0 p-1.5">
               <ResusLogo className="w-full h-full" tile={false} />
             </div>
           </div>
@@ -327,7 +334,7 @@ export const InteractiveCommandBar: React.FC = () => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="border-t border-[#827786]/25 px-5 py-3.5 bg-[#FAF7F2]/75"
+              className="border-t border-[#827786]/15 px-5 py-3.5 bg-[#FAF7F2]/90"
             >
               <div className="flex items-start gap-3">
                 <CheckCircle2 className="w-4 h-4 text-[#1E6B48] shrink-0 mt-0.5" />
@@ -340,23 +347,20 @@ export const InteractiveCommandBar: React.FC = () => {
           )}
         </AnimatePresence>
 
-        {/* Suggestions List Drawer */}
-        <div className="border-t border-[#827786]/25 px-4 py-3">
-          <div className="flex items-center justify-between px-2 mb-2">
-            <span className="text-[10.5px] font-bold tracking-wider uppercase text-[#554B5D]">
-              {browserMode ? 'Browser Mode Suggestions' : 'Smart Actions'}
+        {/* SMART ACTIONS Section matching pixel-exact mockup */}
+        <div className="border-t border-[#827786]/15">
+          <div className="px-5 pt-3.5 pb-2 flex items-center justify-between">
+            <span className="text-[11px] font-bold tracking-wider uppercase text-[#554B5D]">
+              {browserMode ? 'Browser Mode Suggestions' : 'SMART ACTIONS'}
             </span>
-            <span className="text-[10.5px] font-medium text-[#554B5D]">
+            <span className="text-[11px] font-medium text-[#554B5D]">
               ↑↓ Navigate · ↵ Run
             </span>
           </div>
 
-          <div className="space-y-1">
+          <div className="px-3 pb-3 space-y-1.5">
             {displayItems.map((item, idx) => {
-              const isSelected =
-                idx === selectedIndex ||
-                item.command.toLowerCase().startsWith(query.toLowerCase().trim()) ||
-                activeResult?.id === item.id;
+              const isSelected = currentActiveItem?.id === item.id;
               return (
                 <button
                   key={item.id}
@@ -366,20 +370,20 @@ export const InteractiveCommandBar: React.FC = () => {
                     handleUserInteract();
                     setSelectedIndex(idx);
                   }}
-                  className={`w-full flex items-center gap-3 px-2.5 py-2 rounded-[11px] border text-left transition-all cursor-pointer ${
+                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-[16px] text-left transition-all cursor-pointer ${
                     isSelected
-                      ? 'bg-[#FFF0EB]/95 border-[#FF4500] shadow-[0_0_10px_rgba(255,69,0,0.14)]'
-                      : 'bg-transparent border-transparent hover:bg-[#F5F0E8]/85 hover:border-[#FF4500]/40'
+                      ? 'border-[1.5px] border-[#FF5722] bg-[#FFF6F3]/95 shadow-[0_0_12px_rgba(255,87,34,0.12)]'
+                      : 'border border-transparent bg-transparent hover:bg-white/50 hover:border-[#827786]/20'
                   }`}
                 >
-                  <div className="w-8 h-8 rounded-[9px] bg-[#F5F0E8] border border-[#827786]/30 flex items-center justify-center shrink-0">
+                  <div className="w-9 h-9 rounded-[11px] bg-white/80 border border-[#827786]/20 flex items-center justify-center shrink-0">
                     {item.icon}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-[13px] font-semibold text-[#292432] truncate">{item.title}</div>
-                    <div className="text-[11.5px] text-[#3F3748] truncate">{item.description}</div>
+                    <div className="text-[13.5px] font-semibold text-[#292432] truncate">{item.title}</div>
+                    <div className="text-[11.5px] text-[#554B5D] truncate leading-tight mt-0.5">{item.description}</div>
                   </div>
-                  <span className="hidden sm:inline-flex px-2.5 py-1 rounded-[7px] bg-[#F5F0E8] border border-[#827786]/30 text-[10.5px] font-semibold text-[#554B5D] shrink-0">
+                  <span className="hidden sm:inline-flex px-3 py-1 rounded-[9px] bg-white/60 border border-[#827786]/20 text-[11px] font-medium text-[#554B5D] shrink-0">
                     {item.category}
                   </span>
                 </button>
