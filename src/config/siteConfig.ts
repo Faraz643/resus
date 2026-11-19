@@ -1,6 +1,6 @@
 export const SITE_CONFIG = {
   brandName: 'Resus',
-  tagline: 'Your desktop. On another ⅃ǝvǝL.',
+  tagline: 'Your desktop. On another level.',
   subTagline: 'One command. Countless possibilities.',
 
   // GitHub Releases (automatically synced at runtime via GitHub Releases API)
